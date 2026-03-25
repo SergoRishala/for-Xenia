@@ -42,6 +42,22 @@
 
         .key-word { color: #ff0000 !important; text-shadow: 0 0 20px #ff0000 !important; }
         .key-word-secret { color: #fff !important; text-shadow: 0 0 15px #9d00ff, 0 0 30px #9d00ff !important; }
+
+        .key-word-gradient {
+            background: linear-gradient(90deg, #FF0150, #FF007B, #FF01C1);
+            background-size: 200% auto;
+            color: transparent !important;
+            -webkit-background-clip: text;
+            background-clip: text;
+            animation: gradientShift 3s linear infinite;
+            display: inline-block;
+            filter: drop-shadow(0 0 8px rgba(255,20,147,0.7));
+        }
+
+        @keyframes gradientShift {
+            to { background-position: 200% center; }
+        }
+
         .strike { text-decoration: line-through; color: #777 !important; text-shadow: none !important; }
 
         .word-cascade-wrap { display: inline-flex; flex-wrap: wrap; justify-content: center; gap: 0.25em; }
@@ -215,18 +231,18 @@
     </div>
 
     <div id="password-container">
-        <h3 style="margin:0">Система підозрює втручання</h3>
-        <p style="margin:5px 0">Який шифр (повний) нашої групи був на першому курсі?</p>
-        <input type="text" id="password-input" placeholder="..." autocomplete="off">
+        <h3 style="margin:0">Фейс-контроль 🕵️‍♀️</h3>
+        <p style="margin:5px 0">Доведи, що ти справжня Ксю! Введи повний шифр нашої групи (згадай перший курс):</p>
+        <input type="text" id="password-input" placeholder="..." autocomplete="off" onkeydown="if(event.key==='Enter') checkPasswordManual()">
         <br>
         <button class="btn-base" onclick="checkPasswordManual()">Ввести</button>
         <button id="hint-btn" class="btn-base" style="display:none; border-color:#00ffff; color:#00ffff;" onclick="showHint()">Підказка</button>
-        <p id="password-hint" style="color:yellow; display:none; margin-top:10px;">Підказка: повний, через дефіс, без пробілів</p>
+        <p id="password-hint" style="color:yellow; display:none; margin-top:10px;">Підказка: повний, через дефіс, без пробілів (051...)</p>
         <p id="password-error" style="color:red; display:none; margin-top:10px;">ні ні спробуй ще</p>
     </div>
 
     <div id="final-btn-container">
-        <button class="btn-base" onclick="sendTG('Натиснуто: Чекайте на мене'); location.reload()">Чекайте на мене 27.03.2026</button>
+        <button class="btn-base" onclick="sendTG('Натиснуто: Обов\'язково набери'); location.reload()">Обов'язково набери як будеш вільна 📞</button>
     </div>
 
     <canvas id="game-canvas" width="700" height="900"></canvas>
@@ -255,9 +271,11 @@
             getDisplayTime: function(htmlText) {
                 const plainText = htmlText.replace(/<[^>]*>?/gm, '').trim();
                 const wordCount = plainText.split(/\s+/).filter(w => w.length > 0).length;
-                if (wordCount <= 3) return 1700;
-                if (wordCount <= 6) return 4100;
-                if (wordCount <= 8) return 5200;
+                if (wordCount <= 4) return 1000;
+                if (wordCount <= 7) return 2000;
+                if (wordCount <= 9) return 3000;
+                if (wordCount <= 11) return 4000;
+                if (wordCount <= 13) return 5000;
                 return 6500;
             },
             textFadeOutDelay: 60,
@@ -293,7 +311,7 @@
         let columns = Math.floor((window.innerWidth || 800) * 2.875 / 18) || 10;
         let drops = Array.from({length: columns}).map(() => Math.floor(Math.random() * ((window.innerHeight || 800) * 2.875 / 18)));
         let charIndices = Array(columns).fill(0);
-        
+
         let isGlobalPause = false, isScrolling = false, time = 0, offsetScrollY = 0, msgIndex = 0, activeAlbum = 1;
         let currentAngle = 0, matrixColorHue = 0, isGameRunning = false, stopMatrixSpawning = false;
         let isGrandFinaleSpin = false, isGrandFinaleParty = false;
@@ -310,60 +328,61 @@
         // МАСИВИ ТЕКСТІВ
         // ==========================================
         const messages = [
-            "Йоу, Ксю! Вітаю з Днем народження тебе!",
-            "Аж не віриться що тобі вже 21!",
-            "а те, що тобі 20, то це віриться! 😁",
-            "Слухай, пам'ятаєш, як тільки ми познайомилися на першому курсі?",
-            "Тоді ми гадали, що ж все-таки дорівнює одиниці: 0^1 чи 1^0.",
-            "Я впевнений, що ти точно памʼятаєш цю історію!",
-            "І все ж таки, що дорівнює одиниці?",
-            "Пфф! Я навіть не сумнівався. Моя ж ти розумниця!",
-            "За ці роки стільки всього змінилося, але ти залишаєшся такою ж класною.",
-            "Завжди щирою, цілеспрямованою і просто неймовірною людиною.",
-            "Але давай перевіримо, наскільки добре ти пам'ятаєш наші секрети? 😎",
-            "Лан, пожартували і годі 😁",
-            "Ксюша, наша любима, ми всі разом бажаємо тобі любові та довгого життя!",
-            "Щоб усі твої найсміливіші мрії збувалися, а життя приносило лише радість!",
+            "Йоу, Ксю! З твоїм днем! З Днем народження! 🥳",
+            "Аж не віриться, що тобі вже 21... Хоча знаєш, у твої 20 віриться більше! 😁",
+            "Бажаю тобі нескінченного драйву, легких рішень і щоб кожен день приносив кайф!",
+            "Нехай у твоєму житті буде стільки ж яскравих моментів, скільки зірок на небі.",
+            "Завжди залишайся такою ж харизматичною, енергійною та просто неперевершеною!",
+            "Але перед тим, як ми підемо далі, давай згадаємо нашу першу зустріч...",
+            "Тож, що все-таки дорівнює одиниці?",
+            "Пфф! Я навіть не сумнівався. Ти ж у нас геній!",
+            "Я знаю, що ти обожнюєш тримати все під контролем (у хорошому сенсі, звісно).",
+            "І тобі це дуже личить, бо ти вмієш блискуче організувати будь-яку ситуацію і знайти вихід з будь-якого лабіринту проблем.",
+            "Але скажи чесно... зараз у тебе все йде за планом?",
+            "Чи матриця вже вийшла з-під контролю і ти просто виконуєш мої алгоритми? 😎",
+            "Лан, розслабся і просто насолоджуйся",
+            "Ксюша, ми всі тебе дуже любимо і бажаємо фінансового зльоту та душевного дзену.",
+            "Щоб усі твої найамбітніші цілі досягалися по клацанню пальців!",
             "А зараз твій вибір вирішить наш подальший шлях...",
-            "Що я тобі відправив в тг 4 листопада 2021 року о 21:01?"
+            "Що я тобі відправив у тг 4 листопада 2021 року о 21:01?"
         ];
 
         const postAlbum1Texts = [
             "Ну шо, закрила альбомчік? А тепер подивись мені в очі (через екран).",
-            "Ці фотки — то тіки верхушка айсберга всього того трешу, шо ми пережили.",
+            "Ці фотки — то лише маленька частинка всього того трешу, шо ми пережили.",
             "Зараз буде невелика перевірочка, шоб я знав, шо це точно ти.",
-            "Бач, всіх Тімурів треба знати в лице (хоча б в пікселях).",
-            "Знаєш, я іноді дуже сумую за нашими «чистими четвергами» — нашою традицією обов'язково кудись вибиратися.",
-            "Це завжди були найкращі дні тижня. Бажаю, щоб у твоєму житті було якомога більше таких теплих моментів.",
-            "Я досі капець як вдячний тобі за ті безкоштовні уроки англійської!",
-            "Тільки ти мала стільки терпіння пояснювати мені правила. Ти вкладала свій час просто так, і я це ціную.",
-            "Один з моїх найулюбленіших спогадів — це наші нічні вокальні концерти в Одесі перед сном.",
-            "Це був абсолютний кайф і свобода! Бажаю, щоб у тебе завжди був настрій співати від душі.",
-            "Ось ти обрала варіант «там голосове», а що в тому голосовому кажеться?",
-            "Може треба було обрати той варіант саме що говориться там? Спробуй!",
-            "Будь самою-самою, наша Ксюша! 🥂"
+            "Бач, всіх Тімурів треба знати в лице!",
+            "Слухай, а пам'ятаєш наші «четверги»? Наша залізна традиція кудись вибиратися то в Пурі чвені, то в якиийсь інший заклад",
+            "То ж бажаю, щоб у твоєму житті завжди знаходився час на такі безтурботні і кайфові моменти!",
+            "Оо, а памятаєш ті уроки англійської? Ти мій найкращий особистий репетитор.",
+            "Тому нехай світ повертає тобі стільки ж добра, турботи і крутих шансів, скільки ти даруєш іншим!",
+            "А ті наші нічні вокальні концерти в Одесі перед сном? Це був абсолютний відрив!",
+            "То ж нехай у тебе завжди буде настрій співати від душі, а поруч будуть люди, які підхоплять твій вайб.",
+            "Ось ти обрала варіант «там голосове»... а що ж у ньому було?",
+            "Може треба було обрати саме те, що говорилося там? Спробуй ще раз!",
+            "Залишайся такою ж яскравою і неповторною. Будь самою-самою, наша Ксюша! 🥂"
         ];
 
         const postAlbum2Texts = [
             "Ти пройшла цей секретний левел... Значить, пора розказати всьо як є.",
-            "Всі ці картинки — то просто п!кселі, але наші спогади — це те, шо робить нас stali.",
-            "Обіцяю ніколи більше не відкривати двері в твоє життя «з ноги», як того разу, коли ти страшенно образилася! 😂",
-            "Я безмежно радий, що наша дружба пройшла через ці кумедні міні-катастрофи. Дякую, що терпиш мої витівки.",
-            "Пам'ятаєш, як ми довго ламали голову, як тебе підписати в моєму телефоні?",
-            "«051: Ксения» було нудно, і ти видала коронну фразу: «Не будет у тебя Ксюши!».",
-            "Система підозрює втручання. Який шифр (повний) нашої групи був на першому курсі?",
+            "Всі ці картинки — то просто п!кселі, але наші спогади — це те, шо робить нас справжніми.",
+            "Обіцяю більше ніколи не відкривати двері в твоє життя «з ноги», як тоді, коли я привітвся з тобою матом 😂",
+            "То ж нехай у твоє життя всі радощі заходять ефектно, але обов'язково м'яко і без нервів!",
+            "А пам'ятаєш, як ми ламали голову, як тебе підписати? 051:Ксенія не підходить, Ксю - теж не те, і ти видала: «Не будет у тебя Ксюши!».",
+            "Тому бажаю, щоб тебе оточували лише ті люди, з якими так само легко і весело придумувати всяку діч.",
             "Доступ підтверджено. А то я вже подумав, що ти хацкер.",
-            "А пам'ятаєш переписку перед Новим 2022 роком? Ти подарувала мені спортивну сумку.",
-            "Я ще досі нею користуюся! Без неї не обходиться жодна моя пригода.",
-            "Мій улюблений Агент Ксюбінатор! 📟 Ніколи не забуду наш надсекретний план «Любімка проти Кіри».",
-            "І те, як нас епічно «спалили»! Бажаю, щоб у твоєму житті було побільше таких веселих авантюр.",
-            "Згадую, як ми разом планували твій день народження і поїздку до центру Вільнюса, куди ти переїхала.",
-            "Я мав приїхати до тебе, але почалася війна, і кордони закрилися.",
-            "Я тоді не приїхав, але бажаю, щоб попереду в тебе було ще сотні міст, красивих вулиць і смачної кави.",
-            "А я завжди готовий скласти компанію! Дякую тобі за те, шо ти є.",
-            "Я завжди буду десь поруч. Навіть якщо весь цей світ дасть збій.",
+            "Оо, а згадай Новий 2022 рік... Ти подарувала мені спортивну сумку, і жодна поїздка не обходиться без неї. Це лише один приклад твоєї влучності!",
+            "То ж нехай життя щодня підкидає тобі найкорисніші подарунки і сюрпризи, про які ти навіть не мріяла!",
+            "А пам'ятаєш наш надсекретний план «Любімка» проти тої Кіри? Ми так старанно його розробляли...",
+            "А потім він перетворився на цілу епопею з купою мемів і спільних жартів.",
+            "Тому бажаю тобі сміливості на нові драйвові авантюри і щоб поруч завжди був надійний напарник.",
+            "А як ми планували поїздку у Вільнюс? Я мав приїхати, але війна сплутала всі карти.",
+            "То ж бажаю, щоб попереду в тебе були сотні нових країн, де ти гулятимеш красивими вулицями, а я обов'язково складу компанію!",
+            "Ти неймовірно креативна, глибока, душевна і турботлива. Дякую тобі за те, шо ти є.",
+            "Ми зараз рідко бачимося, але це н!коли <span class=\"strike\">не перекреслить</span> наших крутих спогадів.",
+            "Я завжди буду поруч (навіть якщо і онлайн), щоб підтримати тебе, посміятися з тобою і просто бути твоїм другом.",
             "Сяй яскравіше за всі неони, бо ти наша зірочка, ти наша Ксю! 🌟",
-            "Просто будь щаслива, мала! ❤️"
+            "Просто будь найщасливішою! ❤️"
         ];
 
         // ==========================================
@@ -554,6 +573,22 @@
             }, 20);
         }
 
+        function formatText(text, isSecret) {
+            let res = text.replace(/перекреслить/gi, '<span class="strike">перекреслить</span>');
+
+            const secretNames = ['Ксенія', 'Ксюша', 'Ксю', 'Сергій', 'Тимур', 'Настя', 'Іра', 'Зизо', 'Абідат', 'Ілля', 'Наташа', 'Кіра', 'Ванш', 'Тімурів', '«Любімка»', 'Ксюбінатор', 'Анжелу', 'Олега', 'Денис', 'Юрчіком', 'Юрчик', 'Ярослав', 'Яною'];
+            const goodWords = ['щастя', 'драйву', 'кайф', 'харизматичною', 'геній', 'дзену', 'зльоту', 'мрії', 'репетитор', 'Вільнюс', 'подарунки', 'сюрпризи', 'креативна', 'глибока', 'душевна', 'турботлива', 'найщасливішою', 'зірочка', 'ефектно', 'авантюри', 'першовідкривачі', 'яскравою', 'неповторною', 'енергійною', 'неперевершеною', 'красивою', 'щирості', 'вмінні'];
+
+            if (isSecret) {
+                secretNames.forEach(name => { res = res.replace(new RegExp(name, 'gi'), `<span class="key-word-secret">$&</span>`); });
+            } else {
+                secretNames.forEach(name => { res = res.replace(new RegExp(name, 'gi'), `<span class="key-word-gradient">$&</span>`); });
+            }
+            goodWords.forEach(word => { res = res.replace(new RegExp(word, 'gi'), `<span class="key-word-gradient">$&</span>`); });
+
+            return res;
+        }
+
         function setMessageText(container, html, isSecret) {
             if (isSecret) setTextDecode(container, html); else setTextWordCascade(container, html);
         }
@@ -577,37 +612,36 @@
             if (isGlobalPause) return;
             time += 0.05;
 
-            // Зміна кольорів і обертання для різних стадій
             if (activeAlbum === 2 && !isGrandFinaleParty) {
-                matrixColorHue += 0.001; 
+                matrixColorHue += 0.001;
             }
             if (isGrandFinaleParty) {
-                matrixColorHue += 0.015; 
+                matrixColorHue += 0.015;
             } else if (isGameRunning) {
                 currentAngle -= CONFIG.matrixRotationSpeed;
                 matrixColorHue += CONFIG.matrixColorSpeed;
                 rotator.style.transform = `rotate(${currentAngle}deg)`;
             } else if (isGrandFinaleSpin) {
                 matrixColorHue += 0.005;
-                currentAngle -= 2; 
+                currentAngle -= 2;
                 rotator.style.transform = `rotate(${currentAngle}deg)`;
             }
 
             ctx1.fillStyle = 'rgba(0, 0, 0, 0.05)'; ctx1.fillRect(0, 0, canvas1.width, canvas1.height); ctx1.font = `bold 18px monospace`;
-            
-            const h1 = (328 + (matrixColorHue * 360)) % 360; 
+
+            const h1 = (328 + (matrixColorHue * 360)) % 360;
             const h2 = (348 + (matrixColorHue * 360)) % 360;
-            const currentMatrixColor = `hsl(${h1}, 100%, 54%)`; 
+            const currentMatrixColor = `hsl(${h1}, 100%, 54%)`;
             const currentMatrixShadow = `hsl(${h2}, 83%, 47%)`;
-            
+
             if (activeAlbum === 2 || isGrandFinaleParty || isGrandFinaleSpin) {
-                msgContainer.style.color = currentMatrixColor; 
+                msgContainer.style.color = currentMatrixColor;
                 msgContainer.style.textShadow = `0 0 16px ${currentMatrixColor}, 0 0 40px ${currentMatrixShadow}`;
             } else {
                 msgContainer.style.color = '#ff1493';
                 msgContainer.style.textShadow = '0 0 16px #ff1493, 0 0 40px #ff0000';
             }
-            
+
             for (let i = 0; i < drops.length; i++) {
                 const isUA = (i % 3 === 0); const phrase = isUA ? phraseUA : phraseEN;
                 const text = phrase[charIndices[i] % phrase.length];
@@ -640,60 +674,46 @@
         function fadeOutDecode(container) { return new Promise(resolve => { if (decodeInterval) { clearInterval(decodeInterval); decodeInterval = null; } container.innerHTML = ''; resolve(); }); }
         function fadeOutContent(container) { return activeAlbum === 2 ? fadeOutDecode(container) : fadeOutCascade(container); }
 
-        function formatText(text, isSecret) {
-            let res = text.replace(/перекреслить/gi, '<span class="strike">перекреслить</span>');
-            if (isSecret) {
-                const secretNames = ['Ксенія', 'Ксюша', 'Ксю', 'Сергій', 'Тимур', 'Настя', 'Іра', 'Зизо', 'Абідат', 'Ілля', 'Наташа', 'Кіра', 'Ванш', 'Тімурів', 'Любімка', 'Ксюбінатор'];
-                secretNames.forEach(name => { res = res.replace(new RegExp(name, 'gi'), `<span class="key-word-secret">$&</span>`); });
-            } else {
-                let words = res.split(' ');
-                if (words.length >= 4 && !res.includes('<span')) {
-                    let idx = Math.floor(Math.random() * (words.length - 1));
-                    words[idx] = `<span class="key-word">${words[idx]}</span>`; res = words.join(' ');
-                }
-            }
-            return res;
-        }
-
         async function showNextMessage() {
             if (msgIndex >= messages.length) { activeAlbum === 1 ? startPostAlbum1Phase() : startPostAlbum2Phase(); return; }
             const currentRawText = messages[msgIndex]; if (msgIndex === 2) isScrolling = true;
 
-            if (msgIndex === 10) { 
+            // Хакерська пауза (Імітація збою)
+            if (msgIndex === 11) {
                 isGlobalPause = true; try { audio1.pause(); } catch(e){} await fadeOutContent(msgContainer); await delay(300);
-                
+
                 msgContainer.style.transition = "none";
                 msgContainer.style.transform = "scale(1) translateY(0)";
                 msgContainer.style.filter = "blur(0px)";
                 msgContainer.style.opacity = "1";
                 msgContainer.style.color = "#00ff00"; msgContainer.style.textShadow = "0 0 16px #00ff00, 0 0 40px #00ff00";
-                
+
                 msgContainer.textContent = "";
                 for (const char of currentRawText) { msgContainer.textContent += char; await delay(60); }
                 await delay(1500); msgContainer.textContent = "";
-                
+
                 msgIndex++;
                 msgContainer.textContent = "";
                 for (const char of messages[msgIndex]) { msgContainer.textContent += char; await delay(60); }
                 await delay(1000);
-                
+
                 isGlobalPause = false; try { audio1.play(); } catch(e){}
-                
+
                 msgContainer.style.transition = "";
                 msgContainer.style.transform = "";
                 msgContainer.style.filter = "";
                 msgContainer.style.opacity = "";
                 msgContainer.style.color = ""; msgContainer.style.textShadow = "";
-                
+
                 msgIndex++; setTimeout(showNextMessage, 500); return;
             }
 
             msgContainer.className = activeAlbum === 2 ? 'text-secret' : '';
 
             setMessageText(msgContainer, formatText(currentRawText, activeAlbum === 2), activeAlbum === 2); msgContainer.classList.add('show');
-            
+
             if (msgIndex === 6) { setTimeout(() => { document.getElementById('choice-panel').style.display = 'block'; }, 1000); return; }
-            if (msgIndex === 15) { setTimeout(() => { document.getElementById('quiz-panel').style.display = 'grid'; }, 1000); return; }
+            if (msgIndex === 16) { setTimeout(() => { document.getElementById('quiz-panel').style.display = 'grid'; }, 1000); return; }
 
             const d = getDisplayTime(currentRawText);
             setTimeout(async () => { msgContainer.classList.remove('show'); await fadeOutContent(msgContainer); msgIndex++; showNextMessage(); }, d);
@@ -705,10 +725,10 @@
         function handleChoice(val, correct) {
             sendTG(`Опитування 1 (Дата): обрано ${val} (${correct ? 'Правильно' : 'Помилка'})`);
             document.getElementById('choice-panel').style.display = 'none';
-            if (correct) { 
+            if (correct) {
                 msgContainer.innerHTML = '';
-                msgIndex++; 
-                showNextMessage(); 
+                msgIndex++;
+                showNextMessage();
             } else {
                 setTimeout(() => location.reload(), 600);
             }
@@ -751,17 +771,17 @@
                 container.style.display = 'block';
             });
         }
-        
+
         function verifyCaptcha() {
             sendTG("Натиснуто: Підтвердити (капча)");
             let isCorrect = (selectedCaptcha.size === correctIndices.size);
             for (let index of selectedCaptcha) { if (!correctIndices.has(index)) { isCorrect = false; break; } }
-            if (isCorrect) { 
+            if (isCorrect) {
                 sendTG("Капча успішно пройдена!");
-                document.getElementById('captcha-container').style.display = 'none'; captchaResolve(); 
-            } else { 
+                document.getElementById('captcha-container').style.display = 'none'; captchaResolve();
+            } else {
                 sendTG("Помилка капчі.");
-                document.getElementById('captcha-error').style.display = 'block'; 
+                document.getElementById('captcha-error').style.display = 'block';
             }
         }
 
@@ -799,7 +819,7 @@
 
         async function playPostAlbumTexts(textArray, isSecret) {
             rotator.style.opacity = "1"; msgContainer.innerHTML = '';
-            
+
             const images = isSecret ? albumImages2 : albumImages1;
             let albumDoneResolve; const albumDone = new Promise(r => { albumDoneResolve = r; });
             bookClosedResolve = albumDoneResolve;
@@ -808,8 +828,8 @@
             await delay(1000);
 
             for (let i = 0; i < textArray.length; i++) {
-                if (!isSecret && i === 3) await showCaptcha(); // Captcha 
-                if (isSecret && i === 6) await showPasswordPrompt(); // Password 
+                if (!isSecret && i === 3) await showCaptcha(); // Captcha runs BEFORE index 3
+                if (isSecret && i === 6) await showPasswordPrompt(); // Password runs BEFORE index 6
 
                 const html = formatText(textArray[i], isSecret);
                 setMessageText(msgContainer, html, isSecret);
@@ -851,7 +871,7 @@
                 "Що ми тут накняпкали взагалі?",
                 "Слухай, раз ми вже тут, то я підготував для тебе невеличкий подарунок — твою власну гру!",
                 "Пролітай крізь нас усіх, через кожного друга, і долай будь-які перешкоди.",
-                "Погнали!"
+                "Ти в нас найсміливіша і найкрутіша. Покажи клас! Погнали!"
             ];
             for (const t of secretTexts) {
                 setTextDecode(msgContainer, formatText(t, true)); msgContainer.classList.add('show');
@@ -911,14 +931,14 @@
         // ==========================================
         function triggerGrandFinale(isSecret) {
             isGrandFinaleSpin = false; isGrandFinaleParty = false;
-            
+
             if (isSecret) {
                 rotator.style.transition = "transform 4s cubic-bezier(0.4, 0, 0.2, 1)";
-                rotator.style.transform = "rotate(720deg) scale(1.5)"; 
-                isGrandFinaleParty = true; 
-                
+                rotator.style.transform = "rotate(720deg) scale(1.5)";
+                isGrandFinaleParty = true;
+
                 setInterval(() => {
-                    for(let i = 0; i < 3; i++) { 
+                    for(let i = 0; i < 3; i++) {
                         const fw = document.createElement('div');
                         fw.className = 'firework';
                         fw.style.left = Math.random() * 100 + '%'; fw.style.top = Math.random() * 100 + '%';
@@ -931,8 +951,8 @@
 
             } else {
                 rotator.style.transition = "none";
-                isGrandFinaleSpin = true; 
-                
+                isGrandFinaleSpin = true;
+
                 setInterval(() => {
                     const fw = document.createElement('div');
                     fw.className = 'firework';
@@ -947,7 +967,7 @@
 
         function startSurprise() {
             try { document.getElementById('start-btn').style.display = 'none'; } catch(e){}
-            try { 
+            try {
                 let audio = document.getElementById('bg-music');
                 if(audio) { let p = audio.play(); if(p !== undefined) p.catch(e => console.log(e)); }
             } catch(e){}
