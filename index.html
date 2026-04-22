@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🎵 Вгадай Мелодію</title>
+<title>🎵 Вгадай Мелодію - PRO Версія</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -32,36 +32,23 @@
     min-height: 100vh;
     overflow-x: hidden;
     position: relative;
+    display: flex;
   }
 
-  /* Animated background */
+  /* Анімований фон */
   body::before {
     content: '';
-    position: fixed;
-    inset: 0;
+    position: fixed; inset: 0;
     background:
       radial-gradient(ellipse 60% 50% at 20% 20%, rgba(123,47,255,0.15) 0%, transparent 60%),
       radial-gradient(ellipse 50% 60% at 80% 80%, rgba(255,60,172,0.12) 0%, transparent 60%),
       radial-gradient(ellipse 40% 40% at 50% 50%, rgba(0,229,255,0.05) 0%, transparent 70%);
-    pointer-events: none;
-    z-index: 0;
+    pointer-events: none; z-index: 0;
   }
 
-  /* Floating particles */
-  .particles {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 0;
-    overflow: hidden;
-  }
-  .particle {
-    position: absolute;
-    width: 2px;
-    height: 2px;
-    border-radius: 50%;
-    animation: floatUp linear infinite;
-  }
+  /* Частинки */
+  .particles { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+  .particle { position: absolute; width: 2px; height: 2px; border-radius: 50%; animation: floatUp linear infinite; }
   @keyframes floatUp {
     0% { transform: translateY(100vh) translateX(0); opacity: 0; }
     10% { opacity: 1; }
@@ -69,774 +56,370 @@
     100% { transform: translateY(-10vh) translateX(50px); opacity: 0; }
   }
 
-  .container {
-    position: relative;
-    z-index: 1;
-    max-width: 720px;
-    margin: 0 auto;
-    padding: 30px 20px 60px;
-  }
+  .main-content { flex: 1; display: flex; justify-content: center; }
+  .container { position: relative; z-index: 1; width: 100%; max-width: 720px; padding: 30px 20px 60px; }
 
-  /* Header */
-  .header {
-    text-align: center;
-    margin-bottom: 40px;
-    animation: fadeDown 0.8s ease both;
-  }
-  @keyframes fadeDown {
-    from { opacity: 0; transform: translateY(-30px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .logo {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    margin-bottom: 8px;
-  }
-
+  /* Шапка */
+  .header { text-align: center; margin-bottom: 30px; animation: fadeDown 0.8s ease both; }
+  @keyframes fadeDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
+  
+  .logo { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 8px; }
   .logo-icon {
-    width: 50px; height: 50px;
+    width: 50px; height: 50px; border-radius: 14px;
     background: linear-gradient(135deg, var(--accent2), var(--accent));
-    border-radius: 14px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 24px;
-    box-shadow: var(--glow-purple);
-    animation: pulse 2s ease-in-out infinite;
+    display: flex; align-items: center; justify-content: center; font-size: 24px;
+    box-shadow: var(--glow-purple); animation: pulse 2s ease-in-out infinite;
   }
-  @keyframes pulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-  }
-
+  @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+  
   h1 {
-    font-size: clamp(28px, 5vw, 42px);
-    font-weight: 800;
+    font-size: clamp(28px, 5vw, 42px); font-weight: 800; letter-spacing: -1px;
     background: linear-gradient(90deg, var(--accent3), var(--accent), var(--accent2));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    letter-spacing: -1px;
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
   }
+  .subtitle { font-family: 'Space Mono', monospace; color: var(--muted); font-size: 13px; letter-spacing: 2px; text-transform: uppercase; }
 
-  .subtitle {
-    font-family: 'Space Mono', monospace;
-    color: var(--muted);
-    font-size: 13px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    margin-top: 4px;
+  /* Екран меню (Вибір жанру) */
+  #start-screen { text-align: center; animation: fadeIn 0.5s ease both; }
+  .genre-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 24px; }
+  .genre-btn {
+    background: var(--card); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px;
+    color: var(--text); font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700;
+    padding: 24px 16px; cursor: pointer; transition: all 0.25s ease;
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
   }
+  .genre-btn:hover {
+    background: rgba(255,255,255,0.05); border-color: var(--accent);
+    transform: translateY(-4px); box-shadow: var(--glow-purple);
+  }
+  .genre-emoji { font-size: 32px; }
 
-  /* Score bar */
+  /* Ігровий інтерфейс */
+  #game-ui { display: none; animation: fadeIn 0.5s ease both; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
   .score-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: var(--card);
-    border: 1px solid rgba(255,255,255,0.05);
-    border-radius: 16px;
-    padding: 14px 24px;
-    margin-bottom: 28px;
-    animation: fadeIn 0.8s 0.2s ease both;
+    display: flex; justify-content: space-between; align-items: center;
+    background: var(--card); border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 16px; padding: 14px 24px; margin-bottom: 24px;
   }
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .score-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 2px;
-  }
-  .score-label {
-    font-family: 'Space Mono', monospace;
-    font-size: 10px;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-  }
-  .score-value {
-    font-size: 22px;
-    font-weight: 800;
-    color: var(--accent3);
-  }
+  .score-item { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+  .score-label { font-family: 'Space Mono', monospace; font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+  .score-value { font-size: 22px; font-weight: 800; color: var(--accent3); }
   .score-value.gold { color: var(--gold); }
-  .score-divider {
-    width: 1px;
-    height: 36px;
-    background: rgba(255,255,255,0.08);
-  }
+  .score-divider { width: 1px; height: 36px; background: rgba(255,255,255,0.08); }
 
-  /* Round tracker */
-  .round-dots {
-    display: flex;
-    justify-content: center;
-    gap: 8px;
-    margin-bottom: 28px;
-    animation: fadeIn 0.8s 0.3s ease both;
-  }
-  .dot {
-    width: 10px; height: 10px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.1);
-    border: 1px solid rgba(255,255,255,0.15);
-    transition: all 0.4s ease;
-  }
+  /* Крапочки (10 раундів) */
+  .round-dots { display: flex; justify-content: center; flex-wrap: wrap; gap: 6px; margin-bottom: 24px; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15); transition: all 0.4s ease; }
   .dot.active { background: var(--accent3); border-color: var(--accent3); box-shadow: 0 0 10px var(--accent3); }
   .dot.correct { background: var(--correct); border-color: var(--correct); box-shadow: 0 0 10px var(--correct); }
   .dot.wrong { background: var(--wrong); border-color: var(--wrong); box-shadow: 0 0 10px var(--wrong); }
 
-  /* Main game card */
-  .game-card {
-    background: var(--card);
-    border: 1px solid rgba(255,255,255,0.06);
-    border-radius: 24px;
-    padding: 32px;
-    margin-bottom: 24px;
-    animation: fadeIn 0.8s 0.4s ease both;
-    position: relative;
-    overflow: hidden;
-  }
-  .game-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, var(--accent2), var(--accent), transparent);
-    opacity: 0.6;
-  }
+  /* Головна картка */
+  .game-card { background: var(--card); border: 1px solid rgba(255,255,255,0.06); border-radius: 24px; padding: 32px; margin-bottom: 24px; position: relative; overflow: hidden; }
+  .game-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--accent2), var(--accent), transparent); opacity: 0.6; }
 
-  /* Vinyl record */
-  .vinyl-wrap {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 28px;
-  }
+  /* Вінілова платівка */
+  .vinyl-wrap { display: flex; justify-content: center; margin-bottom: 28px; }
   .vinyl {
-    width: 140px; height: 140px;
-    border-radius: 50%;
-    background: conic-gradient(
-      #1a1a2e 0deg 20deg, #16213e 20deg 40deg, #1a1a2e 40deg 60deg,
-      #16213e 60deg 80deg, #1a1a2e 80deg 100deg, #16213e 100deg 120deg,
-      #1a1a2e 120deg 140deg, #16213e 140deg 160deg, #1a1a2e 160deg 180deg,
-      #16213e 180deg 200deg, #1a1a2e 200deg 220deg, #16213e 220deg 240deg,
-      #1a1a2e 240deg 260deg, #16213e 260deg 280deg, #1a1a2e 280deg 300deg,
-      #16213e 300deg 320deg, #1a1a2e 320deg 340deg, #16213e 340deg 360deg
-    );
-    box-shadow: 0 0 0 4px rgba(255,255,255,0.05), 0 0 40px rgba(123,47,255,0.3);
-    position: relative;
-    transition: box-shadow 0.3s;
+    width: 140px; height: 140px; border-radius: 50%;
+    background: conic-gradient(#1a1a2e 0deg 20deg, #16213e 20deg 40deg, #1a1a2e 40deg 60deg, #16213e 60deg 80deg, #1a1a2e 80deg 100deg, #16213e 100deg 120deg, #1a1a2e 120deg 140deg, #16213e 140deg 160deg, #1a1a2e 160deg 180deg, #16213e 180deg 200deg, #1a1a2e 200deg 220deg, #16213e 220deg 240deg, #1a1a2e 240deg 260deg, #16213e 260deg 280deg, #1a1a2e 280deg 300deg, #16213e 300deg 320deg, #1a1a2e 320deg 340deg, #16213e 340deg 360deg);
+    box-shadow: 0 0 0 4px rgba(255,255,255,0.05), 0 0 40px rgba(123,47,255,0.3); position: relative; transition: box-shadow 0.3s;
   }
-  .vinyl.spinning {
-    animation: spin 2s linear infinite;
-    box-shadow: 0 0 0 4px rgba(255,60,172,0.2), var(--glow-pink), var(--glow-purple);
-  }
-  @keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-  }
-  .vinyl-center {
-    position: absolute;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    width: 40px; height: 40px;
-    border-radius: 50%;
-    background: radial-gradient(circle, var(--accent2) 0%, var(--accent) 100%);
-    box-shadow: 0 0 20px rgba(255,60,172,0.6);
-  }
-  .vinyl-center::after {
-    content: '';
-    position: absolute;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: var(--bg);
-  }
+  .vinyl.spinning { animation: spin 2s linear infinite; box-shadow: 0 0 0 4px rgba(255,60,172,0.2), var(--glow-pink), var(--glow-purple); }
+  @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+  .vinyl-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 40px; height: 40px; border-radius: 50%; background: radial-gradient(circle, var(--accent2) 0%, var(--accent) 100%); box-shadow: 0 0 20px rgba(255,60,172,0.6); }
+  .vinyl-center::after { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 6px; height: 6px; border-radius: 50%; background: var(--bg); }
 
-  /* Status area */
-  .status-area {
-    text-align: center;
-    min-height: 80px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-  }
+  /* Статус і хвилі */
+  .status-area { text-align: center; min-height: 80px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; }
+  .status-text { font-size: 16px; color: var(--muted); font-family: 'Space Mono', monospace; }
+  .question-label { font-size: 11px; font-family: 'Space Mono', monospace; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 4px; }
 
-  .status-text {
-    font-size: 16px;
-    color: var(--muted);
-    font-family: 'Space Mono', monospace;
-  }
+  .progress-wrap { width: 100%; max-width: 300px; height: 4px; background: rgba(255,255,255,0.08); border-radius: 2px; overflow: hidden; margin-top: 8px; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent2), var(--accent)); border-radius: 2px; width: 0%; transition: width 0.1s linear; }
 
-  .question-label {
-    font-size: 11px;
-    font-family: 'Space Mono', monospace;
-    color: var(--muted);
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    margin-bottom: 4px;
-  }
-
-  /* Progress bar */
-  .progress-wrap {
-    width: 100%;
-    max-width: 300px;
-    height: 4px;
-    background: rgba(255,255,255,0.08);
-    border-radius: 2px;
-    overflow: hidden;
-    margin-top: 8px;
-  }
-  .progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--accent2), var(--accent));
-    border-radius: 2px;
-    width: 0%;
-    transition: width 0.1s linear;
-  }
-
-  /* Wave visualizer */
-  .wave-wrap {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 4px;
-    height: 30px;
-    margin-top: 10px;
-  }
-  .wave-bar {
-    width: 3px;
-    border-radius: 2px;
-    background: linear-gradient(to top, var(--accent2), var(--accent));
-    animation: wave 0.8s ease-in-out infinite;
-    opacity: 0;
-    transition: opacity 0.3s;
-  }
+  .wave-wrap { display: flex; align-items: center; justify-content: center; gap: 4px; height: 30px; margin-top: 10px; }
+  .wave-bar { width: 3px; border-radius: 2px; background: linear-gradient(to top, var(--accent2), var(--accent)); animation: wave 0.8s ease-in-out infinite; opacity: 0; transition: opacity 0.3s; }
   .wave-wrap.active .wave-bar { opacity: 1; }
-  @keyframes wave {
-    0%, 100% { height: 4px; }
-    50% { height: 24px; }
-  }
-  .wave-bar:nth-child(1) { animation-delay: 0s; }
-  .wave-bar:nth-child(2) { animation-delay: 0.1s; }
-  .wave-bar:nth-child(3) { animation-delay: 0.2s; }
-  .wave-bar:nth-child(4) { animation-delay: 0.15s; }
-  .wave-bar:nth-child(5) { animation-delay: 0.05s; }
-  .wave-bar:nth-child(6) { animation-delay: 0.25s; }
-  .wave-bar:nth-child(7) { animation-delay: 0.1s; }
-  .wave-bar:nth-child(8) { animation-delay: 0.3s; }
+  @keyframes wave { 0%, 100% { height: 4px; } 50% { height: 24px; } }
+  .wave-bar:nth-child(1) { animation-delay: 0s; } .wave-bar:nth-child(2) { animation-delay: 0.1s; } .wave-bar:nth-child(3) { animation-delay: 0.2s; } .wave-bar:nth-child(4) { animation-delay: 0.15s; } .wave-bar:nth-child(5) { animation-delay: 0.05s; } .wave-bar:nth-child(6) { animation-delay: 0.25s; } .wave-bar:nth-child(7) { animation-delay: 0.1s; } .wave-bar:nth-child(8) { animation-delay: 0.3s; }
 
-  /* Play button */
-  .play-btn {
-    background: linear-gradient(135deg, var(--accent2), var(--accent));
-    border: none;
-    border-radius: 50px;
-    color: white;
-    font-family: 'Syne', sans-serif;
-    font-size: 15px;
-    font-weight: 700;
-    padding: 14px 36px;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    transition: all 0.2s ease;
-    box-shadow: var(--glow-purple);
-    letter-spacing: 0.5px;
-    margin-top: 12px;
-  }
+  .play-btn { background: linear-gradient(135deg, var(--accent2), var(--accent)); border: none; border-radius: 50px; color: white; font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; padding: 14px 36px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s ease; box-shadow: var(--glow-purple); letter-spacing: 0.5px; margin-top: 12px; }
   .play-btn:hover { transform: translateY(-2px) scale(1.02); box-shadow: 0 0 50px rgba(123,47,255,0.6); }
-  .play-btn:active { transform: scale(0.98); }
-  .play-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+  .play-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
 
-  /* Answer options */
-  .options-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    animation: fadeIn 0.6s ease both;
-  }
+  /* Таймер-кільце */
+  .countdown-ring { position: relative; width: 60px; height: 60px; display: none; align-items: center; justify-content: center; margin-top: 8px; }
+  .countdown-ring.show { display: flex; }
+  .countdown-ring svg { position: absolute; top: 0; left: 0; transform: rotate(-90deg); }
+  .countdown-ring circle { fill: none; stroke-width: 3; stroke-linecap: round; }
+  .countdown-ring circle.bg { stroke: rgba(255,255,255,0.08); }
+  .countdown-ring circle.progress { stroke: url(#grad); transition: stroke-dashoffset 0.1s linear; }
+  .countdown-num { font-family: 'Space Mono', monospace; font-size: 18px; font-weight: 700; color: var(--accent3); z-index: 1; }
 
-  .option-btn {
-    background: var(--surface);
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 16px;
-    color: var(--text);
-    font-family: 'Syne', sans-serif;
-    font-size: 13px;
-    font-weight: 700;
-    padding: 16px 14px;
-    cursor: pointer;
-    text-align: left;
-    transition: all 0.25s ease;
-    position: relative;
-    overflow: hidden;
-    line-height: 1.3;
-  }
-  .option-btn::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, var(--accent2), var(--accent));
-    opacity: 0;
-    transition: opacity 0.2s;
-  }
+  /* Варіанти відповідей */
+  .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .option-btn { background: var(--surface); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; color: var(--text); font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; padding: 16px 14px; cursor: pointer; text-align: left; transition: all 0.25s ease; position: relative; overflow: hidden; line-height: 1.3; }
+  .option-btn::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, var(--accent2), var(--accent)); opacity: 0; transition: opacity 0.2s; }
   .option-btn:hover:not(:disabled)::before { opacity: 0.08; }
-  .option-btn:hover:not(:disabled) {
-    border-color: rgba(123,47,255,0.4);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
-  }
+  .option-btn:hover:not(:disabled) { border-color: rgba(123,47,255,0.4); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
   .option-btn:disabled { cursor: not-allowed; }
-  .option-btn.correct {
-    background: rgba(0,255,157,0.1);
-    border-color: var(--correct);
-    color: var(--correct);
-    box-shadow: 0 0 20px rgba(0,255,157,0.2);
-  }
-  .option-btn.wrong {
-    background: rgba(255,68,68,0.1);
-    border-color: var(--wrong);
-    color: var(--wrong);
-  }
-  .option-btn.revealed {
-    background: rgba(0,255,157,0.05);
-    border-color: rgba(0,255,157,0.3);
-    color: var(--correct);
-    opacity: 0.7;
-  }
+  .option-btn.correct { background: rgba(0,255,157,0.1); border-color: var(--correct); color: var(--correct); }
+  .option-btn.wrong { background: rgba(255,68,68,0.1); border-color: var(--wrong); color: var(--wrong); }
+  .option-btn.revealed { background: rgba(0,255,157,0.05); border-color: rgba(0,255,157,0.3); color: var(--correct); opacity: 0.7; }
 
-  .option-letter {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 22px; height: 22px;
-    border-radius: 6px;
-    background: rgba(255,255,255,0.06);
-    font-family: 'Space Mono', monospace;
-    font-size: 11px;
-    font-weight: 700;
-    margin-bottom: 6px;
-    color: var(--muted);
-  }
-  .option-btn.correct .option-letter { background: rgba(0,255,157,0.2); color: var(--correct); }
-  .option-btn.wrong .option-letter { background: rgba(255,68,68,0.2); color: var(--wrong); }
+  .option-letter { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 6px; background: rgba(255,255,255,0.06); font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; margin-bottom: 6px; color: var(--muted); }
+  .option-name { display: block; font-size: 13px; font-weight: 700; }
+  .option-artist { display: block; font-size: 11px; font-weight: 400; color: var(--muted); margin-top: 2px; }
 
-  .option-name {
-    display: block;
-    font-size: 13px;
-    font-weight: 700;
-  }
-  .option-artist {
-    display: block;
-    font-size: 11px;
-    font-weight: 400;
-    color: var(--muted);
-    margin-top: 2px;
-  }
-  .option-btn.correct .option-artist,
-  .option-btn.wrong .option-artist,
-  .option-btn.revealed .option-artist { color: inherit; opacity: 0.7; }
-
-  /* Result feedback */
-  .feedback {
-    text-align: center;
-    padding: 16px;
-    border-radius: 14px;
-    font-size: 15px;
-    font-weight: 700;
-    margin-top: 16px;
-    animation: bounceIn 0.4s ease both;
-    display: none;
-  }
-  @keyframes bounceIn {
-    0% { transform: scale(0.8); opacity: 0; }
-    70% { transform: scale(1.05); }
-    100% { transform: scale(1); opacity: 1; }
-  }
+  /* Фідбек і кнопки */
+  .feedback { text-align: center; padding: 16px; border-radius: 14px; font-size: 15px; font-weight: 700; margin-top: 16px; display: none; animation: bounceIn 0.4s ease both; }
+  @keyframes bounceIn { 0% { transform: scale(0.8); opacity: 0; } 70% { transform: scale(1.05); } 100% { transform: scale(1); opacity: 1; } }
   .feedback.show { display: block; }
   .feedback.correct-fb { background: rgba(0,255,157,0.1); border: 1px solid rgba(0,255,157,0.3); color: var(--correct); }
   .feedback.wrong-fb { background: rgba(255,68,68,0.1); border: 1px solid rgba(255,68,68,0.3); color: var(--wrong); }
 
-  /* Next button */
-  .next-btn {
-    width: 100%;
-    background: transparent;
-    border: 1px solid rgba(255,255,255,0.12);
-    border-radius: 16px;
-    color: var(--text);
-    font-family: 'Syne', sans-serif;
-    font-size: 15px;
-    font-weight: 700;
-    padding: 16px;
-    cursor: pointer;
-    margin-top: 14px;
-    transition: all 0.25s ease;
-    display: none;
-    letter-spacing: 0.5px;
-  }
+  .next-btn { width: 100%; background: transparent; border: 1px solid rgba(255,255,255,0.12); border-radius: 16px; color: var(--text); font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; padding: 16px; cursor: pointer; margin-top: 14px; display: none; }
   .next-btn:hover { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.2); transform: translateY(-1px); }
-  .next-btn.show { display: block; animation: fadeIn 0.4s ease both; }
+  .next-btn.show { display: block; }
 
-  /* End screen */
-  .end-screen {
-    display: none;
-    text-align: center;
-    animation: fadeIn 0.8s ease both;
-  }
+  /* Екран завершення */
+  .end-screen { display: none; text-align: center; }
   .end-screen.show { display: block; }
+  .end-emoji { font-size: 64px; display: block; margin-bottom: 16px; }
+  .end-title { font-size: 32px; font-weight: 800; background: linear-gradient(90deg, var(--gold), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; }
+  .end-score-big { font-size: 64px; font-weight: 800; color: var(--gold); font-family: 'Space Mono', monospace; line-height: 1; margin: 16px 0; }
+  .end-detail { color: var(--muted); font-size: 14px; font-family: 'Space Mono', monospace; margin-bottom: 32px; }
+  .restart-btn { background: linear-gradient(135deg, var(--accent2), var(--accent)); border: none; border-radius: 50px; color: white; font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; padding: 16px 48px; cursor: pointer; transition: all 0.2s ease; box-shadow: var(--glow-purple); letter-spacing: 0.5px; }
+  .restart-btn:hover { transform: translateY(-2px) scale(1.02); box-shadow: 0 0 50px rgba(123,47,255,0.6); }
 
-  .end-emoji {
-    font-size: 64px;
-    display: block;
-    margin-bottom: 16px;
-    animation: bounceIn 0.6s ease both;
-  }
-  .end-title {
-    font-size: 32px;
-    font-weight: 800;
-    background: linear-gradient(90deg, var(--gold), var(--accent));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    margin-bottom: 8px;
-  }
-  .end-score-big {
-    font-size: 64px;
-    font-weight: 800;
-    color: var(--gold);
-    font-family: 'Space Mono', monospace;
-    line-height: 1;
-    margin: 16px 0;
-  }
-  .end-detail {
-    color: var(--muted);
-    font-size: 14px;
-    font-family: 'Space Mono', monospace;
-    margin-bottom: 32px;
-  }
-  .restart-btn {
-    background: linear-gradient(135deg, var(--accent2), var(--accent));
-    border: none;
-    border-radius: 50px;
-    color: white;
-    font-family: 'Syne', sans-serif;
-    font-size: 16px;
-    font-weight: 700;
-    padding: 16px 48px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    box-shadow: var(--glow-purple);
-    letter-spacing: 0.5px;
-  }
-  .restart-btn:hover { transform: translateY(-2px) scale(1.02); box-shadow: 0 0 50px rgba(255,60,172,0.5); }
+  /* Прихований плеєр */
+  #yt-player { position: absolute; width: 200px; height: 200px; opacity: 0.01; pointer-events: none; z-index: -100; top: 0; }
 
-  /* Hidden YouTube iframe FIX */
-  #yt-player {
-    position: absolute;
-    width: 200px;
-    height: 200px;
-    opacity: 0.01;
-    pointer-events: none;
-    z-index: -100;
-    top: 0;
-  }
+  /* Панель відлагодження */
+  .debug-panel { width: 320px; background: #0b0b14; border-left: 2px solid var(--accent); padding: 20px; overflow-y: auto; max-height: 100vh; font-family: 'Space Mono', monospace; font-size: 12px; position: relative; z-index: 50; }
+  .debug-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
+  .debug-header h3 { color: var(--accent3); font-family: 'Syne', sans-serif; font-size: 16px; margin: 0; }
+  .debug-clear { background: none; border: 1px solid var(--muted); color: var(--muted); border-radius: 4px; padding: 4px 8px; font-size: 10px; cursor: pointer; }
+  .log-container { display: flex; flex-direction: column; gap: 8px; }
+  .log-entry { background: rgba(255,255,255,0.03); padding: 8px; border-radius: 6px; word-break: break-word; border-left: 3px solid transparent; }
+  .log-time { color: var(--muted); font-size: 10px; display: block; margin-bottom: 2px; }
+  .log-info { border-color: var(--accent3); color: #e0e0ff; }
+  .log-success { border-color: var(--correct); color: var(--correct); }
+  .log-error { border-color: var(--wrong); color: var(--wrong); background: rgba(255,68,68,0.1); font-weight: bold; }
 
-  /* Countdown overlay */
-  .countdown-ring {
-    position: relative;
-    width: 60px; height: 60px;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    margin-top: 8px;
-  }
-  .countdown-ring.show { display: flex; }
-  .countdown-ring svg {
-    position: absolute;
-    top: 0; left: 0;
-    transform: rotate(-90deg);
-  }
-  .countdown-ring circle {
-    fill: none;
-    stroke-width: 3;
-    stroke-linecap: round;
-    transition: stroke-dashoffset 0.1s linear;
-  }
-  .countdown-ring circle.bg { stroke: rgba(255,255,255,0.08); }
-  .countdown-ring circle.progress { stroke: url(#grad); }
-  .countdown-num {
-    font-family: 'Space Mono', monospace;
-    font-size: 18px;
-    font-weight: 700;
-    color: var(--accent3);
-    z-index: 1;
-  }
+  @media (max-width: 1000px) { body { flex-direction: column; } .debug-panel { width: 100%; height: 250px; border-left: none; border-top: 2px solid var(--accent); } .options-grid { grid-template-columns: 1fr; } }
 
-  @media (max-width: 480px) {
-    .options-grid { grid-template-columns: 1fr; }
-    .game-card { padding: 24px 18px; }
-    h1 { font-size: 28px; }
+  /* Конфетті анімація */
+  @keyframes confettifall {
+    0% { transform: translate(0,0) rotate(0deg); opacity: 1; }
+    100% { transform: translate(var(--tx), var(--ty)) rotate(var(--rot)); opacity: 0; }
   }
 </style>
 </head>
 <body>
 
 <div class="particles" id="particles"></div>
-
 <div id="yt-player"></div>
 
-<div class="container">
-  <div class="header">
-    <div class="logo">
-      <div class="logo-icon">🎵</div>
-      <h1>Вгадай Мелодію</h1>
+<div class="main-content">
+  <div class="container">
+    
+    <div class="header">
+      <div class="logo">
+        <div class="logo-icon">🎵</div>
+        <h1>Вгадай Мелодію</h1>
+      </div>
+      <p class="subtitle" id="main-subtitle">Guess The Beat · Music Quiz</p>
     </div>
-    <p class="subtitle">Guess The Beat · Music Quiz</p>
-  </div>
 
-  <div class="score-bar">
-    <div class="score-item">
-      <span class="score-label">Раунд</span>
-      <span class="score-value" id="round-display">1 / 5</span>
-    </div>
-    <div class="score-divider"></div>
-    <div class="score-item">
-      <span class="score-label">Правильно</span>
-      <span class="score-value gold" id="correct-display">0</span>
-    </div>
-    <div class="score-divider"></div>
-    <div class="score-item">
-      <span class="score-label">Очки</span>
-      <span class="score-value" id="score-display">0</span>
-    </div>
-  </div>
-
-  <div class="round-dots" id="round-dots">
-    <div class="dot active"></div>
-    <div class="dot"></div>
-    <div class="dot"></div>
-    <div class="dot"></div>
-    <div class="dot"></div>
-  </div>
-
-  <div class="game-card" id="game-area">
-    <div class="vinyl-wrap">
-      <div class="vinyl" id="vinyl">
-        <div class="vinyl-center"></div>
+    <div id="start-screen">
+      <p style="color: var(--muted); font-weight: 700; margin-bottom: 10px; font-size: 18px;">Обери категорію (10 раундів)</p>
+      <div class="genre-grid">
+        <button class="genre-btn" onclick="startGame('rock')"><span class="genre-emoji">🎸</span> Рок</button>
+        <button class="genre-btn" onclick="startGame('classic')"><span class="genre-emoji">🎻</span> Класика</button>
+        <button class="genre-btn" onclick="startGame('pop')"><span class="genre-emoji">🎤</span> Поп</button>
+        <button class="genre-btn" onclick="startGame('modern')"><span class="genre-emoji">🎧</span> Сучасні</button>
+        <button class="genre-btn" onclick="startGame('ukrainian')"><span class="genre-emoji">🇺🇦</span> Українські</button>
+        <button class="genre-btn" onclick="startGame('folk')"><span class="genre-emoji">🌻</span> Народні</button>
+        <button class="genre-btn" onclick="startGame('meloman')"><span class="genre-emoji">🔥</span> Меломан</button>
+        <button class="genre-btn" onclick="startGame('random')"><span class="genre-emoji">🎲</span> Рандом</button>
       </div>
     </div>
 
-    <div class="status-area" id="status-area">
-      <p class="question-label">Хто виконує цю пісню?</p>
-      <p class="status-text" id="status-text">Натисни кнопку, щоб почути фрагмент</p>
-
-      <div class="wave-wrap" id="wave">
-        <div class="wave-bar"></div><div class="wave-bar"></div>
-        <div class="wave-bar"></div><div class="wave-bar"></div>
-        <div class="wave-bar"></div><div class="wave-bar"></div>
-        <div class="wave-bar"></div><div class="wave-bar"></div>
+    <div id="game-ui">
+      <div class="score-bar">
+        <div class="score-item"><span class="score-label">Раунд</span><span class="score-value" id="round-display">1 / 10</span></div>
+        <div class="score-divider"></div>
+        <div class="score-item"><span class="score-label">Правильно</span><span class="score-value gold" id="correct-display">0</span></div>
+        <div class="score-divider"></div>
+        <div class="score-item"><span class="score-label">Очки</span><span class="score-value" id="score-display">0</span></div>
       </div>
 
-      <div class="progress-wrap" id="prog-wrap" style="display:none">
-        <div class="progress-fill" id="prog-fill"></div>
+      <div class="round-dots" id="round-dots"></div>
+
+      <div class="game-card" id="game-area">
+        <div class="vinyl-wrap"><div class="vinyl" id="vinyl"><div class="vinyl-center"></div></div></div>
+
+        <div class="status-area" id="status-area">
+          <p class="question-label">Хто виконує цю пісню?</p>
+          <p class="status-text" id="status-text">Натисни кнопку, щоб почути фрагмент</p>
+
+          <div class="wave-wrap" id="wave">
+            <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+            <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+          </div>
+
+          <div class="progress-wrap" id="prog-wrap" style="display:none"><div class="progress-fill" id="prog-fill"></div></div>
+
+          <div class="countdown-ring" id="countdown-ring">
+            <svg width="60" height="60" viewBox="0 0 60 60">
+              <defs><linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:#7b2fff"/><stop offset="100%" style="stop-color:#ff3cac"/></linearGradient></defs>
+              <circle class="bg" cx="30" cy="30" r="26"/>
+              <circle class="progress" id="countdown-circle" cx="30" cy="30" r="26" stroke-dasharray="163.4" stroke-dashoffset="0"/>
+            </svg>
+            <span class="countdown-num" id="countdown-num">10</span>
+          </div>
+
+          <button class="play-btn" id="play-btn" onclick="playSnippet()">▶ Слухати фрагмент</button>
+        </div>
+        <div class="feedback" id="feedback"></div>
       </div>
 
-      <div class="countdown-ring" id="countdown-ring">
-        <svg width="60" height="60" viewBox="0 0 60 60">
-          <defs>
-            <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" style="stop-color:#7b2fff"/>
-              <stop offset="100%" style="stop-color:#ff3cac"/>
-            </linearGradient>
-          </defs>
-          <circle class="bg" cx="30" cy="30" r="26"/>
-          <circle class="progress" id="countdown-circle" cx="30" cy="30" r="26"
-            stroke-dasharray="163.4"
-            stroke-dashoffset="0"/>
-        </svg>
-        <span class="countdown-num" id="countdown-num">5</span>
-      </div>
-
-      <button class="play-btn" id="play-btn" onclick="playSnippet()">
-        ▶ Слухати фрагмент
-      </button>
+      <div class="options-grid" id="options-grid"></div>
+      <button class="next-btn" id="next-btn" onclick="nextRound()">Наступний раунд →</button>
     </div>
 
-    <div class="feedback" id="feedback"></div>
-  </div>
-
-  <div class="options-grid" id="options-grid"></div>
-
-  <button class="next-btn" id="next-btn" onclick="nextRound()">
-    Наступний раунд →
-  </button>
-
-  <div class="end-screen" id="end-screen">
-    <span class="end-emoji" id="end-emoji">🎉</span>
-    <div class="end-title" id="end-title">Чудова гра!</div>
-    <div class="end-score-big" id="end-score-big">0</div>
-    <div class="end-detail" id="end-detail">0 з 5 правильних відповідей</div>
-    <button class="restart-btn" onclick="restartGame()">🔄 Грати знову</button>
+    <div class="end-screen" id="end-screen">
+      <span class="end-emoji" id="end-emoji">🎉</span>
+      <div class="end-title" id="end-title">Чудова гра!</div>
+      <div class="end-score-big" id="end-score-big">0</div>
+      <div class="end-detail" id="end-detail">0 з 10 правильних відповідей</div>
+      <button class="restart-btn" onclick="goHome()">🏠 На головну сторінку</button>
+    </div>
   </div>
 </div>
 
-<svg style="display:none">
-  <defs>
-    <linearGradient id="grad-global" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" style="stop-color:#7b2fff"/>
-      <stop offset="100%" style="stop-color:#ff3cac"/>
-    </linearGradient>
-  </defs>
-</svg>
+<div class="debug-panel">
+  <div class="debug-header"><h3>Відлагодження (Logs)</h3><button class="debug-clear" onclick="document.getElementById('log-container').innerHTML=''">Очистити</button></div>
+  <div class="log-container" id="log-container"></div>
+</div>
 
 <script>
 // ==============================
-// SONG DATABASE
+// ЛОГЕР ДЛЯ ДЕБАГУ
 // ==============================
-const SONGS = [
-  { id: 'dQw4w9WgXcQ', name: 'Never Gonna Give You Up', artist: 'Rick Astley', genre: 'Pop' },
-  { id: 'JGwWNGJdvx8', name: 'Shape of You', artist: 'Ed Sheeran', genre: 'Pop' },
-  { id: 'kXYiU_JCYtU', name: 'Numb', artist: 'Linkin Park', genre: 'Rock' },
-  { id: 'fJ9rUzIMcZQ', name: 'Bohemian Rhapsody', artist: 'Queen', genre: 'Rock' },
-  { id: 'OPf0YbXqDm0', name: 'Uptown Funk', artist: 'Mark Ronson ft. Bruno Mars', genre: 'Funk' },
-  { id: 'kJQP7kiw5Fk', name: 'Despacito', artist: 'Luis Fonsi ft. Daddy Yankee', genre: 'Latin' },
-  { id: '4NRXx6U8ABQ', name: 'Blinding Lights', artist: 'The Weeknd', genre: 'Synthpop' },
-  { id: 'CevxZvSJLk8', name: 'Roar', artist: 'Katy Perry', genre: 'Pop' },
-  { id: 'y6Sxv-sUYtM', name: 'Happy', artist: 'Pharrell Williams', genre: 'Pop' },
-  { id: 'hLQl3WQQoQ0', name: 'Someone Like You', artist: 'Adele', genre: 'Pop' },
-  { id: 'nfWlot6h_JM', name: 'Shake It Off', artist: 'Taylor Swift', genre: 'Pop' },
-  { id: 'KQ6zr6kCPj8', name: 'Party Rock Anthem', artist: 'LMFAO', genre: 'Electronic' },
-  { id: 'rYEDA3JcQqw', name: 'Rolling in the Deep', artist: 'Adele', genre: 'Pop' },
-  { id: 'fRh_vgS2dFE', name: 'Sorry', artist: 'Justin Bieber', genre: 'Pop' },
-  { id: 'fKopy74weus', name: 'Thunder', artist: 'Imagine Dragons', genre: 'Rock' },
-  { id: 'FTQbiNvZqaY', name: 'Africa', artist: 'TOTO', genre: 'Rock' },
-  { id: 'hTWKbfoikeg', name: 'Smells Like Teen Spirit', artist: 'Nirvana', genre: 'Grunge' },
-  { id: '9bZkp7q19f0', name: 'Gangnam Style', artist: 'PSY', genre: 'K-Pop' },
-  { id: 'djV11Xbc914', name: 'Take On Me', artist: 'a-ha', genre: 'Synth-pop' },
-  { id: 'RgKAFK5djSk', name: 'See You Again', artist: 'Wiz Khalifa ft. Charlie Puth', genre: 'Hip-Hop' },
-  { id: 'YVkUvmDQ3HY', name: 'Without Me', artist: 'Eminem', genre: 'Hip-Hop' },
-  { id: 'YqeW9_5kURI', name: 'Lean On', artist: 'Major Lazer & DJ Snake', genre: 'Electronic' },
-  { id: 'nYh-n7EOtMA', name: 'Cheap Thrills', artist: 'Sia', genre: 'Pop' },
-  { id: '2Vv-BfVoq4g', name: 'Perfect', artist: 'Ed Sheeran', genre: 'Pop' },
-  { id: 'ru0K8uYEZWw', name: 'Can\'t Stop the Feeling!', artist: 'Justin Timberlake', genre: 'Pop' },
-  { id: '09R8_2nJtjg', name: 'Sugar', artist: 'Maroon 5', genre: 'Pop' },
-  { id: '60ItHLz5WEA', name: 'Faded', artist: 'Alan Walker', genre: 'Electronic' },
-  { id: 'jofNR_WkoCE', name: 'The Fox (What Does The Fox Say?)', artist: 'Ylvis', genre: 'Comedy' },
-  { id: 'TUVcZfQe-Kw', name: 'Levitating', artist: 'Dua Lipa', genre: 'Pop' },
-  { id: '7wtfhZwyrcc', name: 'Believer', artist: 'Imagine Dragons', genre: 'Rock' },
-  { id: 'e-ORhEE9VVg', name: 'Blank Space', artist: 'Taylor Swift', genre: 'Pop' },
-  { id: 'IcrbM1l_BoI', name: 'Wake Me Up', artist: 'Avicii', genre: 'Electronic' },
-  { id: 'hT_nvWreIhg', name: 'Counting Stars', artist: 'OneRepublic', genre: 'Pop Rock' },
-  { id: 'lp-EO5I60KA', name: 'Thinking Out Loud', artist: 'Ed Sheeran', genre: 'Pop' },
-  { id: 'YQHsXMglC9A', name: 'Hello', artist: 'Adele', genre: 'Pop' },
-  { id: '1w7OgIMMRc4', name: 'Sweet Child O\' Mine', artist: 'Guns N\' Roses', genre: 'Rock' },
-  { id: 'CSvFpBOe8eY', name: 'Chop Suey!', artist: 'System Of A Down', genre: 'Metal' },
-  { id: 'eVTXPUF4Oz4', name: 'In The End', artist: 'Linkin Park', genre: 'Rock' },
-  { id: 'lDK9QqIzhwk', name: 'Livin\' On A Prayer', artist: 'Bon Jovi', genre: 'Rock' },
-  { id: 'OMOGaugKpzs', name: 'Every Breath You Take', artist: 'The Police', genre: 'Rock' },
-  { id: 'izGwDsrQ1eQ', name: 'Careless Whisper', artist: 'George Michael', genre: 'Pop' },
-  { id: '450p7goxZqg', name: 'All of Me', artist: 'John Legend', genre: 'R&B' },
-  { id: 'RBumgq5yVrA', name: 'Let Her Go', artist: 'Passenger', genre: 'Indie Pop' },
-  { id: 'QK8mJJJvaes', name: 'Thrift Shop', artist: 'Macklemore & Ryan Lewis', genre: 'Hip-Hop' },
-  { id: 'vNoKguSdy4Y', name: 'I Knew You Were Trouble', artist: 'Taylor Swift', genre: 'Pop' },
-  { id: 'WpYeekQkAdc', name: 'Where Is The Love?', artist: 'The Black Eyed Peas', genre: 'Hip-Hop' },
-  { id: 'bESGLojNYSo', name: 'Poker Face', artist: 'Lady Gaga', genre: 'Pop' },
-  { id: 'qrO4YZeyl0I', name: 'Bad Romance', artist: 'Lady Gaga', genre: 'Pop' },
-  { id: 'kffacxfA7G4', name: 'Baby', artist: 'Justin Bieber', genre: 'Pop' },
-  { id: 'pRpeEdMmi3I', name: 'Waka Waka (This Time for Africa)', artist: 'Shakira', genre: 'Pop' },
-  { id: '0KSOMA3QBU0', name: 'Dark Horse', artist: 'Katy Perry', genre: 'Pop' },
-  { id: 'NUsoVlDFqZg', name: 'Bailando', artist: 'Enrique Iglesias', genre: 'Latin' },
-  { id: 'L0MK7qz13bU', name: 'Let It Go', artist: 'Idina Menzel', genre: 'Soundtrack' },
-  { id: 'wnJ6LuUFpMo', name: 'Mi Gente', artist: 'J Balvin, Willy William', genre: 'Latin' },
-  { id: '3AtDnEC4zak', name: 'We Don\'t Talk Anymore', artist: 'Charlie Puth ft. Selena Gomez', genre: 'Pop' },
-  { id: 'PT2_F-1esPk', name: 'Closer', artist: 'The Chainsmokers ft. Halsey', genre: 'Electronic' },
-  { id: '6Mgqbai3fAo', name: 'Chantaje', artist: 'Shakira ft. Maluma', genre: 'Latin' },
-  { id: 'DiItGE3eAyQ', name: 'Con Calma', artist: 'Daddy Yankee & Snow', genre: 'Latin' },
-  { id: 'uelHwf8o7_U', name: 'Love The Way You Lie', artist: 'Eminem ft. Rihanna', genre: 'Hip-Hop' },
-  { id: '5GL9JoH4Sws', name: 'Work from Home', artist: 'Fifth Harmony', genre: 'Pop' },
-  { id: 'ApXoWvfEYVU', name: 'Sunflower', artist: 'Post Malone, Swae Lee', genre: 'Hip-Hop' },
-  { id: 'kOkQ4T5OEQs', name: 'This Is What You Came For', artist: 'Calvin Harris ft. Rihanna', genre: 'Electronic' },
-  { id: '2vjPBrBU-TM', name: 'Chandelier', artist: 'Sia', genre: 'Pop' },
-  { id: 'rtOvBOTyX00', name: 'A Thousand Years', artist: 'Christina Perri', genre: 'Pop' },
-  { id: 't4H_Zoh7G5A', name: 'On The Floor', artist: 'Jennifer Lopez ft. Pitbull', genre: 'Pop' },
-  { id: 'ixkoVwKQaJg', name: 'Taki Taki', artist: 'DJ Snake ft. Selena Gomez, Cardi B', genre: 'Latin' },
-  { id: '34Na4j8HLjc', name: 'Starboy', artist: 'The Weeknd ft. Daft Punk', genre: 'R&B' },
-  { id: 'ALZHF5UqnU4', name: 'Alone', artist: 'Marshmello', genre: 'Electronic' },
-  { id: '7PCkvCPvVNk', name: 'All About That Bass', artist: 'Meghan Trainor', genre: 'Pop' },
-  { id: 'lY2yjAdbvdQ', name: 'Treat You Better', artist: 'Shawn Mendes', genre: 'Pop' },
-  { id: 'PIh2xe4jnpk', name: 'Rude', artist: 'MAGIC!', genre: 'Reggae Fusion' },
-  { id: 'GMFewiplIbw', name: 'Mayores', artist: 'Becky G, Bad Bunny', genre: 'Latin' },
-  { id: 'papuvlVeZg8', name: 'Rockabye', artist: 'Clean Bandit', genre: 'Pop' },
-  { id: 'fLexgOxsZu0', name: 'The Lazy Song', artist: 'Bruno Mars', genre: 'Pop' },
-  { id: 'Zi_XLOBDo_Y', name: 'Billie Jean', artist: 'Michael Jackson', genre: 'Pop' },
-  { id: 'sOnqjkJTMaA', name: 'Thriller', artist: 'Michael Jackson', genre: 'Pop' },
-  { id: 'oRdxUFDoQe0', name: 'Beat It', artist: 'Michael Jackson', genre: 'Pop' },
-  { id: '1k8craCGpgs', name: 'Don\'t Stop Believin\'', artist: 'Journey', genre: 'Rock' },
-  { id: '8SbUC-UaAxE', name: 'November Rain', artist: 'Guns N\' Roses', genre: 'Rock' },
-  { id: '6Ejga4kJUts', name: 'Zombie', artist: 'The Cranberries', genre: 'Rock' },
-  { id: '6hzrDeceEKc', name: 'Wonderwall', artist: 'Oasis', genre: 'Rock' },
-  { id: 'xwtdhWltSIg', name: 'Losing My Religion', artist: 'R.E.M.', genre: 'Rock' },
-  { id: 'XFkzRNyygfk', name: 'Creep', artist: 'Radiohead', genre: 'Rock' },
-  { id: 'YlUKcNNmywk', name: 'Californication', artist: 'Red Hot Chili Peppers', genre: 'Rock' },
-  { id: 'rn_YodiJO6k', name: 'Otherside', artist: 'Red Hot Chili Peppers', genre: 'Rock' },
-  { id: 'lwlogyj7nFE', name: 'Under the Bridge', artist: 'Red Hot Chili Peppers', genre: 'Rock' },
-  { id: 'tAGnKpE4NCI', name: 'Nothing Else Matters', artist: 'Metallica', genre: 'Metal' },
-  { id: 'CD-E-LDc384', name: 'Enter Sandman', artist: 'Metallica', genre: 'Metal' },
-  { id: 'iywaBOMvYLI', name: 'Toxicity', artist: 'System Of A Down', genre: 'Metal' },
-  { id: '3YxaaGgTQYM', name: 'Bring Me To Life', artist: 'Evanescence', genre: 'Rock' },
-  { id: 'vx2u5uUu3DE', name: 'It\'s My Life', artist: 'Bon Jovi', genre: 'Rock' },
-  { id: 'btPJPFnesV4', name: 'Eye of the Tiger', artist: 'Survivor', genre: 'Rock' },
-  { id: 'PIb6AZdTr-A', name: 'Girls Just Want To Have Fun', artist: 'Cyndi Lauper', genre: 'Pop' },
-  { id: 'VdQY7BusJNU', name: 'Time After Time', artist: 'Cyndi Lauper', genre: 'Pop' },
-  { id: '4fndeDfaWCg', name: 'I Want It That Way', artist: 'Backstreet Boys', genre: 'Pop' },
-  { id: 'C-u5WLJ9Yk4', name: '...Baby One More Time', artist: 'Britney Spears', genre: 'Pop' },
-  { id: 'CduA0TULnow', name: 'Oops!... I Did It Again', artist: 'Britney Spears', genre: 'Pop' },
-  { id: 'Eo-Kmoc3PVU', name: 'Bye Bye Bye', artist: '*NSYNC', genre: 'Pop' },
-  { id: '_Yhyp-_hX2s', name: 'Lose Yourself', artist: 'Eminem', genre: 'Hip-Hop' },
-  { id: '5qm8PhlNGCC', name: 'In Da Club', artist: '50 Cent', genre: 'Hip-Hop' },
-  { id: 'GxBSyx85Kp8', name: 'Yeah!', artist: 'Usher ft. Lil Jon', genre: 'R&B' },
-  { id: 'DUT5rEU6pqM', name: 'Hips Don\'t Lie', artist: 'Shakira ft. Wyclef Jean', genre: 'Pop' },
-  { id: 'ViwtNLUqkMY', name: 'Crazy In Love', artist: 'Beyoncé ft. JAY Z', genre: 'R&B' },
-  { id: '4m1EFMoRFvY', name: 'Single Ladies', artist: 'Beyoncé', genre: 'Pop' },
-  { id: 'CvBfHwUxHIk', name: 'Umbrella', artist: 'Rihanna ft. JAY-Z', genre: 'Pop' },
-  { id: 'PWgvGjAhvIw', name: 'Hey Ya!', artist: 'Outkast', genre: 'Hip-Hop' },
-  { id: '6vwNcNOTVzY', name: 'Gold Digger', artist: 'Kanye West ft. Jamie Foxx', genre: 'Hip-Hop' },
-  { id: 'PsO6ZnUZI0g', name: 'Stronger', artist: 'Kanye West', genre: 'Hip-Hop' },
-  { id: 'GtUVQei3nX4', name: 'Drop It Like It\'s Hot', artist: 'Snoop Dogg ft. Pharrell', genre: 'Hip-Hop' },
-  { id: '2Abk1jAONjw', name: 'Just Dance', artist: 'Lady Gaga ft. Colby O\'Donis', genre: 'Pop' },
-  { id: 'QGJuMBdaqIw', name: 'Firework', artist: 'Katy Perry', genre: 'Pop' },
-  { id: '8xg3vE8Ie_E', name: 'Love Story', artist: 'Taylor Swift', genre: 'Country Pop' },
-  { id: 'VuNIsY6JdUw', name: 'You Belong With Me', artist: 'Taylor Swift', genre: 'Country Pop' },
-  { id: '8UVNT4wvIGY', name: 'Somebody That I Used To Know', artist: 'Gotye ft. Kimbra', genre: 'Indie Pop' },
-  { id: 'fWNaR-rxAic', name: 'Call Me Maybe', artist: 'Carly Rae Jepsen', genre: 'Pop' },
-  { id: '2zNSgSzhBfM', name: 'Can\'t Hold Us', artist: 'Macklemore & Ryan Lewis', genre: 'Hip-Hop' },
-  { id: 'h5EofwRzit0', name: 'Get Lucky', artist: 'Daft Punk ft. Pharrell Williams', genre: 'Electronic' },
-  { id: 'jGflUbPQfW8', name: 'Cheerleader', artist: 'OMI', genre: 'Pop' },
-  { id: 'oyEuk8j8imI', name: 'Love Yourself', artist: 'Justin Bieber', genre: 'Pop' },
-  { id: 'DK_0jXPuIr0', name: 'What Do You Mean?', artist: 'Justin Bieber', genre: 'Pop' },
-  { id: 'ktvTqknDobU', name: 'Radioactive', artist: 'Imagine Dragons', genre: 'Rock' },
-  { id: 'mWRsgZuwf_8', name: 'Demons', artist: 'Imagine Dragons', genre: 'Rock' },
-  { id: 'euCqAq6BRa4', name: 'Let Me Love You', artist: 'DJ Snake ft. Justin Bieber', genre: 'Electronic' },
-  { id: 'FM7MFYoylVs', name: 'Something Just Like This', artist: 'The Chainsmokers & Coldplay', genre: 'Electronic' },
-  { id: 'XXYlCGOHIYA', name: 'Save Your Tears', artist: 'The Weeknd', genre: 'Synthpop' }
+function logDebug(msg, type='info') {
+  const container = document.getElementById('log-container');
+  const now = new Date();
+  const time = `${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}:${now.getSeconds().toString().padStart(2,'0')}`;
+  const entry = document.createElement('div');
+  entry.className = `log-entry log-${type}`;
+  entry.innerHTML = `<span class="log-time">[${time}]</span>${msg}`;
+  container.appendChild(entry);
+  container.scrollTop = container.scrollHeight;
+}
+
+// ==============================
+// БАЗА ПІСЕНЬ (Поділена на категорії)
+// ==============================
+const ALL_SONGS = [
+  // ROCK
+  { id: 'fJ9rUzIMcZQ', name: 'Bohemian Rhapsody', artist: 'Queen', genre: 'rock' },
+  { id: 'v2AC41dglnM', name: 'Thunderstruck', artist: 'AC/DC', genre: 'rock' },
+  { id: 'hTWKbfoikeg', name: 'Smells Like Teen Spirit', artist: 'Nirvana', genre: 'rock' },
+  { id: 'kXYiU_JCYtU', name: 'Numb', artist: 'Linkin Park', genre: 'rock' },
+  { id: 'CD-E-LDc384', name: 'Enter Sandman', artist: 'Metallica', genre: 'rock' },
+  { id: '1w7OgIMMRc4', name: 'Sweet Child O\' Mine', artist: 'Guns N\' Roses', genre: 'rock' },
+  { id: 'lDK9QqIzhwk', name: 'Livin\' On A Prayer', artist: 'Bon Jovi', genre: 'rock' },
+  { id: 'CSvFpBOe8eY', name: 'Chop Suey!', artist: 'System Of A Down', genre: 'rock' },
+  { id: 'YlUKcNNmywk', name: 'Californication', artist: 'Red Hot Chili Peppers', genre: 'rock' },
+  { id: 'vx2u5uUu3DE', name: 'It\'s My Life', artist: 'Bon Jovi', genre: 'rock' },
+  { id: 'fKopy74weus', name: 'Thunder', artist: 'Imagine Dragons', genre: 'rock' },
+  { id: 'ktvTqknDobU', name: 'Radioactive', artist: 'Imagine Dragons', genre: 'rock' },
+  { id: '3YxaaGgTQYM', name: 'Bring Me To Life', artist: 'Evanescence', genre: 'rock' },
+  { id: '6Ejga4kJUts', name: 'Zombie', artist: 'The Cranberries', genre: 'rock' },
+  { id: 'pAgnJENN4tc', name: 'Back In Black', artist: 'AC/DC', genre: 'rock' },
+
+  // CLASSIC
+  { id: 'hmTEcBZWZcw', name: 'Turkish March', artist: 'W.A. Mozart', genre: 'classic' },
+  { id: '_4IRMYuE1hI', name: 'Symphony No. 5', artist: 'L.V. Beethoven', genre: 'classic' },
+  { id: 'mFWQgxXM_b8', name: 'Spring (Four Seasons)', artist: 'A. Vivaldi', genre: 'classic' },
+  { id: 'Nnuq9PXbywA', name: 'Toccata and Fugue', artist: 'J.S. Bach', genre: 'classic' },
+  { id: '9E6b3swbnWg', name: 'Nocturne op.9 No.2', artist: 'F. Chopin', genre: 'classic' },
+  { id: 'vGZJSBcyBhk', name: 'Swan Lake Theme', artist: 'P. Tchaikovsky', genre: 'classic' },
+  { id: 'GRxofEmo3HA', name: 'Eine kleine Nachtmusik', artist: 'W.A. Mozart', genre: 'classic' },
+  { id: 'p29JUpsOSTE', name: 'Moonlight Sonata', artist: 'L.V. Beethoven', genre: 'classic' },
+  { id: 'VbxgYlcNxE8', name: 'Ride of the Valkyries', artist: 'R. Wagner', genre: 'classic' },
+  { id: 'c1iZXyNBk-8', name: 'Ode to Joy', artist: 'L.V. Beethoven', genre: 'classic' },
+  { id: 'jhPz1Mh0pG0', name: 'Carmen Suite', artist: 'G. Bizet', genre: 'classic' },
+
+  // POP
+  { id: 'Zi_XLOBDo_Y', name: 'Billie Jean', artist: 'Michael Jackson', genre: 'pop' },
+  { id: 'xGPeNN9S0Fg', name: 'Gimme! Gimme! Gimme!', artist: 'ABBA', genre: 'pop' },
+  { id: 'CevxZvSJLk8', name: 'Roar', artist: 'Katy Perry', genre: 'pop' },
+  { id: 'qrO4YZeyl0I', name: 'Bad Romance', artist: 'Lady Gaga', genre: 'pop' },
+  { id: 'C-u5WLJ9Yk4', name: '...Baby One More Time', artist: 'Britney Spears', genre: 'pop' },
+  { id: '4fndeDfaWCg', name: 'I Want It That Way', artist: 'Backstreet Boys', genre: 'pop' },
+  { id: 'nfWlot6h_JM', name: 'Shake It Off', artist: 'Taylor Swift', genre: 'pop' },
+  { id: 'QGJuMBdaqIw', name: 'Firework', artist: 'Katy Perry', genre: 'pop' },
+  { id: 'PIb6AZdTr-A', name: 'Girls Just Want To Have Fun', artist: 'Cyndi Lauper', genre: 'pop' },
+  { id: 'y6Sxv-sUYtM', name: 'Happy', artist: 'Pharrell Williams', genre: 'pop' },
+  { id: 'hLQl3WQQoQ0', name: 'Someone Like You', artist: 'Adele', genre: 'pop' },
+  { id: 'dQw4w9WgXcQ', name: 'Never Gonna Give You Up', artist: 'Rick Astley', genre: 'pop' },
+  { id: 'fRh_vgS2dFE', name: 'Sorry', artist: 'Justin Bieber', genre: 'pop' },
+  { id: '4m1EFMoRFvY', name: 'Single Ladies', artist: 'Beyoncé', genre: 'pop' },
+  { id: 'DUT5rEU6pqM', name: 'Hips Don\'t Lie', artist: 'Shakira', genre: 'pop' },
+
+  // MODERN
+  { id: '4NRXx6U8ABQ', name: 'Blinding Lights', artist: 'The Weeknd', genre: 'modern' },
+  { id: 'TUVcZfQe-Kw', name: 'Levitating', artist: 'Dua Lipa', genre: 'modern' },
+  { id: 'cWGE9GiRV3Q', name: 'Bad Guy', artist: 'Billie Eilish', genre: 'modern' },
+  { id: 'P3cffdwOUcs', name: 'As It Was', artist: 'Harry Styles', genre: 'modern' },
+  { id: 'ZmDBqbTKzD8', name: 'Good 4 U', artist: 'Olivia Rodrigo', genre: 'modern' },
+  { id: '7wtfhZwyrcc', name: 'Believer', artist: 'Imagine Dragons', genre: 'modern' },
+  { id: 'ApXoWvfEYVU', name: 'Sunflower', artist: 'Post Malone', genre: 'modern' },
+  { id: 'ru0K8uYEZWw', name: 'Can\'t Stop the Feeling!', artist: 'Justin Timberlake', genre: 'modern' },
+  { id: 'kJQP7kiw5Fk', name: 'Despacito', artist: 'Luis Fonsi', genre: 'modern' },
+  { id: 'OPf0YbXqDm0', name: 'Uptown Funk', artist: 'Bruno Mars', genre: 'modern' },
+  { id: 'JGwWNGJdvx8', name: 'Shape of You', artist: 'Ed Sheeran', genre: 'modern' },
+  { id: '34Na4j8HLjc', name: 'Starboy', artist: 'The Weeknd', genre: 'modern' },
+
+  // UKRAINIAN
+  { id: '8RgeQbg6hY8', name: 'Без бою', artist: 'Океан Ельзи', genre: 'ukrainian' },
+  { id: 'sM-AetXntXk', name: 'Місця щасливих людей', artist: 'Скрябін', genre: 'ukrainian' },
+  { id: 'Z8Z51no1TD0', name: 'Stefania', artist: 'Kalush Orchestra', genre: 'ukrainian' },
+  { id: 'sDeA7PA5FaI', name: 'SHUM', artist: 'Go_A', genre: 'ukrainian' },
+  { id: '5mX1XQd-F_Q', name: 'Плакала', artist: 'KAZKA', genre: 'ukrainian' },
+  { id: 'b0Xb6y4K4lU', name: 'Вахтерам', artist: 'Бумбокс', genre: 'ukrainian' },
+  { id: 'VnEwMXX1kL8', name: 'Make-Up', artist: 'The Hardkiss', genre: 'ukrainian' },
+  { id: 'R9e3pI1H4Xg', name: 'ТДМЕ', artist: 'Антитіла', genre: 'ukrainian' },
+  { id: 'PXYcyd7HnOQ', name: 'Дежавю', artist: 'Артем Пивоваров', genre: 'ukrainian' },
+  { id: 'R32qE2H93tQ', name: 'Тримай', artist: 'Христина Соловій', genre: 'ukrainian' },
+  { id: 'l2aHhD8N5iA', name: 'Фортеця Бахмут', artist: 'Антитіла', genre: 'ukrainian' },
+
+  // FOLK
+  { id: 'lu8m5FA2nL8', name: 'Ой у лузі червона калина', artist: 'А. Хливнюк', genre: 'folk' },
+  { id: 'Wq7zNGp_Bik', name: 'Щедрик', artist: 'Хор', genre: 'folk' },
+  { id: 'L1t6-h-Vf0c', name: 'Розпрягайте, хлопці, коней', artist: 'Народна', genre: 'folk' },
+  { id: 'E2-M0d4R7t0', name: 'Горіла сосна, палала', artist: 'Народна', genre: 'folk' },
+  { id: 'x4h2_R5Xh_g', name: 'Пісня про рушник', artist: 'Д. Гнатюк', genre: 'folk' },
+  { id: 'A0hN0i3lBks', name: 'Несе Галя воду', artist: 'Народна', genre: 'folk' },
+  { id: 'ZlF8ZMBd1t8', name: 'Цвіте терен', artist: 'Народна', genre: 'folk' },
+  { id: 'qYmJ1tZ5W-w', name: 'Ой, чий то кінь стоїть', artist: 'Народна', genre: 'folk' }
 ];
 
 // ==============================
-// GAME STATE
+// ІГРОВИЙ СТАН
 // ==============================
 let player = null;
+let activeSongs = [];
 let currentSong = null;
 let usedSongs = [];
 let currentRound = 0;
-let totalRounds = 5;
+let totalRounds = 10;
 let score = 0;
 let correctCount = 0;
 let isPlaying = false;
@@ -844,16 +427,16 @@ let playbackTimer = null;
 let countdownInterval = null;
 let answered = false;
 let playbackStart = 0;
-let snippetDuration = 5000;
+let snippetDuration = 10000; // 10 секунд
 let canPlay = false;
 
 // ==============================
-// PARTICLES
+// ФОНОВІ ЧАСТИНКИ
 // ==============================
 function createParticles() {
   const wrap = document.getElementById('particles');
   const colors = ['#ff3cac', '#7b2fff', '#00e5ff', '#ffd700'];
-  for (let i = 0; i < 25; i++) {
+  for (let i=0; i<25; i++) {
     const p = document.createElement('div');
     p.className = 'particle';
     p.style.left = Math.random() * 100 + '%';
@@ -862,6 +445,30 @@ function createParticles() {
     p.style.animationDelay = (-Math.random() * 20) + 's';
     p.style.opacity = 0.3 + Math.random() * 0.4;
     wrap.appendChild(p);
+  }
+}
+
+// ==============================
+// АНІМАЦІЯ КОНФЕТТІ (ФЕЄРВЕРК)
+// ==============================
+function spawnConfetti() {
+  const colors = ['#ff3cac', '#7b2fff', '#00e5ff', '#ffd700', '#00ff9d'];
+  for (let i = 0; i < 30; i++) {
+    const el = document.createElement('div');
+    const tx = (Math.random() > 0.5 ? '+' : '-') + (50 + Math.random() * 150) + 'px';
+    const ty = (50 + Math.random() * 200) + 'px';
+    const rot = (360 + Math.random() * 720) + 'deg';
+    
+    el.style.cssText = `
+      position:fixed; width:8px; height:8px; border-radius:2px;
+      background:${colors[Math.floor(Math.random()*colors.length)]};
+      left:${30+Math.random()*40}%; top:30%; z-index:9999; pointer-events:none;
+      --tx: ${tx}; --ty: ${ty}; --rot: ${rot};
+      animation: confettifall 1.2s ease-out forwards;
+      animation-delay: ${Math.random()*0.3}s;
+    `;
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 1500);
   }
 }
 
@@ -875,9 +482,7 @@ function loadYTApi() {
   document.head.appendChild(tag);
 }
 
-window.onYouTubeIframeAPIReady = function() {
-  initPlayer();
-};
+window.onYouTubeIframeAPIReady = function() { initPlayer(); };
 
 function initPlayer() {
   const wrap = document.getElementById('yt-player');
@@ -886,77 +491,71 @@ function initPlayer() {
   wrap.appendChild(iframe);
 
   player = new YT.Player('yt-iframe', {
-    width: '200', /* FIX: збільшено розмір */
-    height: '200', /* FIX: збільшено розмір */
-    videoId: SONGS[0].id,
-    playerVars: {
-      autoplay: 0,
-      controls: 0,
-      disablekb: 1,
-      enablejsapi: 1,
-      fs: 0,
-      iv_load_policy: 3,
-      modestbranding: 1,
-      rel: 0,
-      showinfo: 0,
-      origin: window.location.origin
-    },
+    width: '200', height: '200',
+    videoId: 'dQw4w9WgXcQ',
+    playerVars: { autoplay: 0, controls: 0, disablekb: 1, enablejsapi: 1, origin: window.location.origin },
     events: {
-      onReady: onPlayerReady,
-      onStateChange: onStateChange
+      onReady: () => { canPlay = true; logDebug('YouTube Плеєр готовий', 'success'); },
+      onError: (e) => {
+        logDebug(`Помилка YT (${e.data}). Можливо відео заблоковано.`, 'error');
+        stopPlayback(true);
+        document.getElementById('status-text').textContent = '⚠️ Помилка завантаження аудіо.';
+      }
     }
   });
 }
 
-function onPlayerReady() {
-  canPlay = true;
-  document.getElementById('play-btn').disabled = false;
+// ==============================
+// ЛОГІКА ГРИ
+// ==============================
+function startGame(genre) {
+  logDebug(`Запуск гри. Жанр: ${genre.toUpperCase()}`);
+  
+  if (genre === 'random') {
+    activeSongs = [...ALL_SONGS];
+  } else if (genre === 'meloman') {
+    activeSongs = ALL_SONGS.filter(s => ['pop', 'rock', 'modern', 'ukrainian'].includes(s.genre));
+  } else {
+    activeSongs = ALL_SONGS.filter(s => s.genre === genre);
+  }
+
+  totalRounds = Math.min(10, activeSongs.length);
+  
+  document.getElementById('start-screen').style.display = 'none';
+  document.getElementById('game-ui').style.display = 'block';
+
+  const dotsContainer = document.getElementById('round-dots');
+  dotsContainer.innerHTML = '';
+  for(let i=0; i<totalRounds; i++) {
+    dotsContainer.innerHTML += '<div class="dot"></div>';
+  }
+
+  currentRound = 0; score = 0; correctCount = 0; usedSongs = [];
+  startRound();
 }
 
-function onStateChange(event) {
-  // нічого специфічного не потрібно
-}
-
-// ==============================
-// GAME LOGIC
-// ==============================
-function getRandomSong(exclude = []) {
-  const available = SONGS.filter(s => !exclude.includes(s.id));
+function getRandomSong() {
+  const available = activeSongs.filter(s => !usedSongs.includes(s.id));
   return available[Math.floor(Math.random() * available.length)];
 }
 
 function getWrongOptions(correct, count = 3) {
-  const pool = SONGS.filter(s => s.id !== correct.id);
-  const shuffled = pool.sort(() => Math.random() - 0.5);
-  return shuffled.slice(0, count);
-}
-
-function shuffle(arr) {
-  return arr.sort(() => Math.random() - 0.5);
+  const pool = activeSongs.filter(s => s.id !== correct.id);
+  return pool.sort(() => Math.random() - 0.5).slice(0, count);
 }
 
 function startRound() {
-  answered = false;
-  isPlaying = false;
-  clearTimers();
-
-  currentSong = getRandomSong(usedSongs);
+  answered = false; isPlaying = false; clearTimers();
+  currentSong = getRandomSong();
   usedSongs.push(currentSong.id);
 
-  // Update UI
   document.getElementById('round-display').textContent = `${currentRound + 1} / ${totalRounds}`;
   document.getElementById('vinyl').classList.remove('spinning');
   document.getElementById('status-text').textContent = 'Натисни кнопку, щоб почути фрагмент';
   document.getElementById('prog-wrap').style.display = 'none';
-  document.getElementById('prog-fill').style.width = '0%';
   document.getElementById('wave').classList.remove('active');
   document.getElementById('countdown-ring').classList.remove('show');
-  document.getElementById('play-btn').disabled = !canPlay;
-  document.getElementById('play-btn').style.display = 'inline-flex';
-  document.getElementById('feedback').className = 'feedback';
-  document.getElementById('next-btn').className = 'next-btn';
-
-  // Update dots
+  
   const dots = document.querySelectorAll('.dot');
   dots.forEach((d, i) => {
     d.className = 'dot';
@@ -964,30 +563,29 @@ function startRound() {
     if (i === currentRound) d.classList.add('active');
   });
 
-  // Build options
+  document.getElementById('play-btn').disabled = false;
+  document.getElementById('play-btn').style.display = 'inline-flex';
+  document.getElementById('play-btn').textContent = '▶ Слухати фрагмент';
+  document.getElementById('feedback').className = 'feedback';
+  document.getElementById('next-btn').className = 'next-btn';
+
   const wrongs = getWrongOptions(currentSong, 3);
-  const allOptions = shuffle([currentSong, ...wrongs]);
+  const allOptions = [currentSong, ...wrongs].sort(() => Math.random() - 0.5);
   const letters = ['A', 'B', 'C', 'D'];
   const grid = document.getElementById('options-grid');
   grid.innerHTML = '';
+  
   allOptions.forEach((song, i) => {
     const btn = document.createElement('button');
     btn.className = 'option-btn';
-    btn.innerHTML = `
-      <span class="option-letter">${letters[i]}</span>
-      <span class="option-name">${song.name}</span>
-      <span class="option-artist">${song.artist}</span>
-    `;
+    btn.innerHTML = `<span class="option-letter">${letters[i]}</span><span class="option-name">${song.name}</span><span class="option-artist">${song.artist}</span>`;
     btn.onclick = () => checkAnswer(song, btn);
     grid.appendChild(btn);
   });
 
-  // Load video FIX
   if (player && player.cueVideoById) {
-    const startSec = 20 + Math.floor(Math.random() * 67); // 20-87
-    playbackStart = startSec;
-    // Використовуємо cueVideoById замість loadVideoById + stopVideo
-    player.cueVideoById({ videoId: currentSong.id, startSeconds: startSec });
+    playbackStart = 20 + Math.floor(Math.random() * 40);
+    player.cueVideoById({ videoId: currentSong.id, startSeconds: playbackStart });
   }
 }
 
@@ -995,7 +593,6 @@ function playSnippet() {
   if (isPlaying || answered || !canPlay) return;
   isPlaying = true;
 
-  document.getElementById('play-btn').disabled = true;
   document.getElementById('play-btn').style.display = 'none';
   document.getElementById('vinyl').classList.add('spinning');
   document.getElementById('wave').classList.add('active');
@@ -1008,186 +605,108 @@ function playSnippet() {
     player.playVideo();
   }
 
-  // Countdown + progress
-  const total = snippetDuration;
   const start = Date.now();
-  const circumference = 163.4;
   const circle = document.getElementById('countdown-circle');
   const numEl = document.getElementById('countdown-num');
   const fillEl = document.getElementById('prog-fill');
 
   countdownInterval = setInterval(() => {
     const elapsed = Date.now() - start;
-    const remaining = Math.max(0, total - elapsed);
-    const secs = Math.ceil(remaining / 1000);
-    const progress = elapsed / total;
+    const remaining = Math.max(0, snippetDuration - elapsed);
+    numEl.textContent = Math.ceil(remaining / 1000);
+    circle.style.strokeDashoffset = 163.4 * (elapsed / snippetDuration);
+    fillEl.style.width = ((elapsed / snippetDuration) * 100) + '%';
 
-    numEl.textContent = secs;
-    circle.style.strokeDashoffset = circumference * progress;
-    fillEl.style.width = (progress * 100) + '%';
-
-    if (elapsed >= total) {
-      clearInterval(countdownInterval);
-      stopPlayback();
-    }
+    if (elapsed >= snippetDuration) stopPlayback();
   }, 50);
 
   playbackTimer = setTimeout(stopPlayback, snippetDuration);
 }
 
-function stopPlayback() {
-  clearTimers();
-  isPlaying = false;
-
-  if (player && player.stopVideo) player.stopVideo();
+function stopPlayback(isError = false) {
+  clearTimers(); isPlaying = false;
+  if (player && player.pauseVideo) player.pauseVideo();
+  
   document.getElementById('vinyl').classList.remove('spinning');
   document.getElementById('wave').classList.remove('active');
   document.getElementById('countdown-ring').classList.remove('show');
   document.getElementById('prog-wrap').style.display = 'none';
 
-  if (!answered) {
+  if (!answered && !isError) {
     document.getElementById('status-text').textContent = 'Обери правильну відповідь!';
-    document.getElementById('play-btn').disabled = false;
     document.getElementById('play-btn').style.display = 'inline-flex';
     document.getElementById('play-btn').textContent = '🔁 Слухати ще раз';
   }
 }
 
 function clearTimers() {
-  if (playbackTimer) { clearTimeout(playbackTimer); playbackTimer = null; }
-  if (countdownInterval) { clearInterval(countdownInterval); countdownInterval = null; }
+  if (playbackTimer) clearTimeout(playbackTimer);
+  if (countdownInterval) clearInterval(countdownInterval);
 }
 
 function checkAnswer(song, btn) {
   if (answered) return;
-  answered = true;
-  stopPlayback();
+  answered = true; stopPlayback();
 
-  const allBtns = document.querySelectorAll('.option-btn');
-  allBtns.forEach(b => b.disabled = true);
-
+  document.querySelectorAll('.option-btn').forEach(b => b.disabled = true);
   const isCorrect = song.id === currentSong.id;
   const feedback = document.getElementById('feedback');
   const dots = document.querySelectorAll('.dot');
 
   if (isCorrect) {
     btn.classList.add('correct');
-    score += 100;
-    correctCount++;
+    score += 100; correctCount++;
     feedback.textContent = '🎉 Правильно! +100 очків';
     feedback.className = 'feedback correct-fb show';
     dots[currentRound].className = 'dot correct';
-    // Fireworks effect
-    spawnConfetti();
+    spawnConfetti(); // Запуск феєрверку
   } else {
     btn.classList.add('wrong');
     feedback.className = 'feedback wrong-fb show';
-    // Show correct
-    allBtns.forEach(b => {
-      const name = b.querySelector('.option-name')?.textContent;
-      if (name === currentSong.name) {
-        b.classList.add('revealed');
-        feedback.textContent = `❌ Неправильно! Це було: ${currentSong.name} — ${currentSong.artist}`;
-      }
+    feedback.textContent = `❌ Це було: ${currentSong.name}`;
+    document.querySelectorAll('.option-btn').forEach(b => {
+      if (b.querySelector('.option-name').textContent === currentSong.name) b.classList.add('revealed');
     });
     dots[currentRound].className = 'dot wrong';
   }
 
   document.getElementById('correct-display').textContent = correctCount;
   document.getElementById('score-display').textContent = score;
-  document.getElementById('play-btn').style.display = 'none';
-  document.getElementById('status-text').textContent = isCorrect ? '✨ Чудово!' : '😔 Наступного разу!';
   document.getElementById('next-btn').className = 'next-btn show';
-  document.getElementById('next-btn').textContent = currentRound < totalRounds - 1 ? 'Наступний раунд →' : 'Переглянути результати 🏆';
+  document.getElementById('next-btn').textContent = currentRound < totalRounds - 1 ? 'Наступний раунд →' : 'Результати 🏆';
 }
 
 function nextRound() {
   currentRound++;
   if (currentRound >= totalRounds) {
-    showEndScreen();
+    document.getElementById('game-area').style.display = 'none';
+    document.getElementById('options-grid').style.display = 'none';
+    document.getElementById('next-btn').style.display = 'none';
+    
+    document.getElementById('end-screen').className = 'end-screen show';
+    document.getElementById('end-score-big').textContent = score;
+    document.getElementById('end-detail').textContent = `${correctCount} з ${totalRounds} правильних відповідей`;
+    
+    // Подвійний феєрверк у кінці
+    for (let i = 0; i < 5; i++) setTimeout(spawnConfetti, i * 300);
   } else {
     startRound();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 }
 
-function showEndScreen() {
-  document.getElementById('game-area').style.display = 'none';
-  document.getElementById('options-grid').style.display = 'none';
-  document.getElementById('next-btn').className = 'next-btn';
-
-  const end = document.getElementById('end-screen');
-  end.className = 'end-screen show';
-
-  const pct = correctCount / totalRounds;
-  let emoji = '😅', title = 'Спробуй ще!';
-  if (pct >= 0.8) { emoji = '🏆'; title = 'Ти справжній меломан!'; }
-  else if (pct >= 0.6) { emoji = '🎸'; title = 'Непогано!'; }
-  else if (pct >= 0.4) { emoji = '🎵'; title = 'Є куди рости!'; }
-
-  document.getElementById('end-emoji').textContent = emoji;
-  document.getElementById('end-title').textContent = title;
-  document.getElementById('end-score-big').textContent = score;
-  document.getElementById('end-detail').textContent = `${correctCount} з ${totalRounds} правильних відповідей`;
-
-  for (let i = 0; i < 5; i++) setTimeout(spawnConfetti, i * 300);
-}
-
-function restartGame() {
-  currentRound = 0;
-  score = 0;
-  correctCount = 0;
-  usedSongs = [];
-
+function goHome() {
   document.getElementById('end-screen').className = 'end-screen';
   document.getElementById('game-area').style.display = 'block';
   document.getElementById('options-grid').style.display = 'grid';
+  document.getElementById('game-ui').style.display = 'none';
+  document.getElementById('start-screen').style.display = 'block';
   document.getElementById('correct-display').textContent = '0';
   document.getElementById('score-display').textContent = '0';
-  document.querySelectorAll('.dot').forEach(d => d.className = 'dot');
-
-  startRound();
-  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// ==============================
-// CONFETTI
-// ==============================
-function spawnConfetti() {
-  const colors = ['#ff3cac', '#7b2fff', '#00e5ff', '#ffd700', '#00ff9d'];
-  for (let i = 0; i < 18; i++) {
-    const el = document.createElement('div');
-    el.style.cssText = `
-      position:fixed; width:8px; height:8px; border-radius:2px;
-      background:${colors[Math.floor(Math.random()*colors.length)]};
-      left:${20+Math.random()*60}%; top:30%;
-      z-index:9999; pointer-events:none;
-      animation: confettifall 1.2s ease-out forwards;
-      animation-delay: ${Math.random()*0.4}s;
-    `;
-    document.body.appendChild(el);
-    setTimeout(() => el.remove(), 1600);
-  }
-}
-
-const confettiStyle = document.createElement('style');
-confettiStyle.textContent = `
-  @keyframes confettifall {
-    0% { transform: translate(0,0) rotate(0deg); opacity:1; }
-    100% { transform: translate(${Math.random()>0.5?'+':'-'}${50+Math.random()*100}px, ${200+Math.random()*300}px) rotate(${360+Math.random()*720}deg); opacity:0; }
-  }
-`;
-document.head.appendChild(confettiStyle);
-
-// ==============================
-// INIT
-// ==============================
 createParticles();
 loadYTApi();
-// Start first round after a short delay
-setTimeout(() => {
-  startRound();
-}, 500);
 </script>
 </body>
 </html>
