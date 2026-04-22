@@ -1,987 +1,983 @@
 <!DOCTYPE html>
 <html lang="uk">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>For Ksyu ✨</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;900&display=swap');
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎵 Вгадай Мелодію - Debug Version</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080810;
+    --surface: #0f0f1e;
+    --card: #13132a;
+    --accent: #ff3cac;
+    --accent2: #7b2fff;
+    --accent3: #00e5ff;
+    --gold: #ffd700;
+    --text: #f0f0ff;
+    --muted: #6b6b9a;
+    --correct: #00ff9d;
+    --wrong: #ff4444;
+    --glow-pink: 0 0 30px rgba(255,60,172,0.5);
+    --glow-blue: 0 0 30px rgba(0,229,255,0.4);
+    --glow-purple: 0 0 40px rgba(123,47,255,0.5);
+  }
 
-        html, body {
-            margin: 0; padding: 0; background-color: #000; overflow: hidden;
-            width: 100%; height: 100vh; height: 100dvh;
-            position: fixed; top: 0; left: 0;
-        }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        body {
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            font-family: 'Courier New', monospace;
-            user-select: none; -webkit-user-select: none; touch-action: none;
-        }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+    display: flex; /* Додано для позиціонування дебагера */
+  }
 
-        #matrix-rotator {
-            position: absolute; top: 0; left: 0;
-            z-index: 1; transition: transform 3s ease-in-out, opacity 2s;
-        }
-        canvas { display: block; }
+  /* Animated background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 20% 20%, rgba(123,47,255,0.15) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 60% at 80% 80%, rgba(255,60,172,0.12) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 40% at 50% 50%, rgba(0,229,255,0.05) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
 
-        #content-wrapper {
-            position: relative; z-index: 2;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            width: 100%; pointer-events: none;
-        }
+  /* Floating particles */
+  .particles {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+  }
+  .particle {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    border-radius: 50%;
+    animation: floatUp linear infinite;
+  }
+  @keyframes floatUp {
+    0% { transform: translateY(100vh) translateX(0); opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 0.5; }
+    100% { transform: translateY(-10vh) translateX(50px); opacity: 0; }
+  }
 
-        #message-container {
-            font-family: 'Montserrat', sans-serif;
-            font-size: clamp(1.8rem, 4vw, 4.5rem); text-align: center;
-            max-width: 90%; font-weight: 900;
-            text-transform: uppercase; line-height: 1.2; margin-bottom: 40px;
-            transition: color 0.1s, text-shadow 0.1s;
-            min-height: 2em;
-        }
+  .main-content {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+  }
 
-        .key-word { color: #ff0000 !important; text-shadow: 0 0 20px #ff0000 !important; }
-        .key-word-secret { color: #fff !important; text-shadow: 0 0 15px #9d00ff, 0 0 30px #9d00ff !important; }
+  .container {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 720px;
+    padding: 30px 20px 60px;
+  }
 
-        .key-word-gradient {
-            background: linear-gradient(90deg, #FF0150, #FF007B, #FF01C1);
-            background-size: 200% auto;
-            color: transparent !important;
-            -webkit-background-clip: text;
-            background-clip: text;
-            animation: gradientShift 3s linear infinite;
-            display: inline-block;
-            filter: drop-shadow(0 0 8px rgba(255,20,147,0.7));
-        }
+  /* Header */
+  .header {
+    text-align: center;
+    margin-bottom: 40px;
+    animation: fadeDown 0.8s ease both;
+  }
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
 
-        @keyframes gradientShift {
-            to { background-position: 200% center; }
-        }
+  .logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
 
-        .strike { text-decoration: line-through; color: #777 !important; text-shadow: none !important; }
+  .logo-icon {
+    width: 50px; height: 50px;
+    background: linear-gradient(135deg, var(--accent2), var(--accent));
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px;
+    box-shadow: var(--glow-purple);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+  }
 
-        .word-cascade-wrap { display: inline-flex; flex-wrap: wrap; justify-content: center; gap: 0.25em; }
-        @keyframes wordCascadeIn {
-            from { opacity: 0; transform: translateY(24px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes wordCascadeOut {
-            from { opacity: 1; transform: translateY(0); }
-            to   { opacity: 0; transform: translateY(-24px); }
-        }
-        .word-cascade-wrap .w {
-            display: inline-block; opacity: 0; animation: wordCascadeIn 0.45s ease forwards;
-        }
-        .word-cascade-wrap .w.out {
-            animation: wordCascadeOut 0.4s ease forwards !important;
-        }
+  h1 {
+    font-size: clamp(28px, 5vw, 42px);
+    font-weight: 800;
+    background: linear-gradient(90deg, var(--accent3), var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -1px;
+  }
 
-        .decode-wrap { display: inline-block; font-family: 'Montserrat', sans-serif; }
+  .subtitle {
+    font-family: 'Space Mono', monospace;
+    color: var(--muted);
+    font-size: 13px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
 
-        .ui-panel { display: none; pointer-events: auto; margin-top: 20px; text-align: center; }
+  /* Score bar */
+  .score-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--card);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 16px;
+    padding: 14px 24px;
+    margin-bottom: 28px;
+  }
 
-        .btn-base {
-            padding: 15px 35px; font-size: 1.2rem;
-            background: rgba(0,0,0,0.9); border: 2px solid #ff1493; cursor: pointer;
-            border-radius: 5px; color: #ff1493; font-weight: bold; transition: 0.3s;
-            margin: 10px; font-family: 'Courier New', monospace; text-transform: uppercase;
-            pointer-events: auto;
-        }
-        .btn-base:hover { background: #ff1493; color: #000; box-shadow: 0 0 33px #ff1493; }
+  .score-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+  }
+  .score-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .score-value {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--accent3);
+  }
+  .score-value.gold { color: var(--gold); }
+  .score-divider {
+    width: 1px;
+    height: 36px;
+    background: rgba(255,255,255,0.08);
+  }
 
-        @media (max-width: 500px) {
-            .btn-base { padding: 10px 15px; font-size: 0.85rem; margin: 5px; }
-            #quiz-panel { gap: 5px !important; width: 95vw; }
-        }
+  /* Round tracker */
+  .round-dots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 28px;
+  }
+  .dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.15);
+    transition: all 0.4s ease;
+  }
+  .dot.active { background: var(--accent3); border-color: var(--accent3); box-shadow: 0 0 10px var(--accent3); }
+  .dot.correct { background: var(--correct); border-color: var(--correct); box-shadow: 0 0 10px var(--correct); }
+  .dot.wrong { background: var(--wrong); border-color: var(--wrong); box-shadow: 0 0 10px var(--wrong); }
 
-        #game-canvas {
-            display: none; position: absolute; z-index: 20;
-            border: 3px solid #00ffff; background: rgba(0, 0, 0, 0.3); backdrop-filter: blur(1.5px);
-            cursor: pointer; box-shadow: 0 0 60px rgba(0, 255, 255, 0.4);
-            width: 70vw; height: 70vh; max-width: 700px; max-height: 900px;
-        }
+  /* Main game card */
+  .game-card {
+    background: var(--card);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 24px;
+    padding: 32px;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .game-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent2), var(--accent), transparent);
+    opacity: 0.6;
+  }
 
-        #book-container {
-            position: fixed; z-index: 10; display: none; justify-content: center; align-items: center;
-            top: 0; left: 0; width: 100%; height: 100%; pointer-events: auto; font-family: 'Courier New', monospace;
-        }
-        #bk-stage { position: relative; width: min(96vw, 1240px); height: min(64vw, 840px); user-select: none; }
-        #bk-inner { position: absolute; inset: 0; }
-        .bk-gut {
-            position: absolute; left: 50%; top: 0; bottom: 0; width: 16px; transform: translateX(-50%);
-            background: linear-gradient(to right,rgba(0,0,0,.65) 0%,rgba(0,0,0,.05) 50%,rgba(0,0,0,.65) 100%);
-            z-index: 2; pointer-events: none;
-        }
-        #bk-pr-next { position: absolute; right: 0; top: 0; width: 50%; height: 100%; overflow: hidden; z-index: 2; }
-        #bk-pl { position: absolute; left: 0; top: 0; width: 50%; height: 100%; overflow: hidden; cursor: pointer; z-index: 3; }
-        #bk-prw { position: absolute; right: 0; top: 0; width: 50%; height: 100%; transform-origin: left center; transform-style: preserve-3d; cursor: pointer; z-index: 4; }
-        .bk-pf, .bk-pb { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; -webkit-backface-visibility: hidden; overflow: hidden; }
-        .bk-pb { transform: rotateY(180deg); }
-        .bk-pc { width: 100%; height: 100%; background: #000d00; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
-        .bk-pc img { position: absolute; top: 0; bottom: 0; left: 5%; right: 5%; width: 90%; height: 100%; object-fit: cover; z-index: 1; }
-        .bk-cm { position: absolute; width: 13px; height: 13px; opacity: .7; pointer-events: none; z-index: 3; }
-        .bk-tl { top: 7px; left: 7px; border-top: 2px solid #00ff41; border-left: 2px solid #00ff41; }
-        .bk-tr { top: 7px; right: 7px; border-top: 2px solid #00ff41; border-right: 2px solid #00ff41; }
-        .bk-bl { bottom: 7px; left: 7px; border-bottom: 2px solid #00ff41; border-left: 2px solid #00ff41; }
-        .bk-br { bottom: 7px; right: 7px; border-bottom: 2px solid #00ff41; border-right: 2px solid #00ff41; }
-        .bk-mc { position: absolute; font-family: 'Courier New',monospace; pointer-events: none; opacity: 0; animation: bk-fall linear infinite; }
-        @keyframes bk-fall { 0%{opacity:0;transform:translateY(-10px)} 15%{opacity:.6} 85%{opacity:.25} 100%{opacity:0;transform:translateY(60px)} }
-        .bk-sheen { position: absolute; top: 0; left: -90%; width: 55%; height: 100%; background: linear-gradient(to right,transparent,rgba(0,255,65,.2),transparent); transform: skewX(-12deg); z-index: 20; pointer-events: none; transition: left .72s ease; }
-        .bk-sheen.go { left: 130%; }
-        #bk-cover { position: absolute; inset: 0; z-index: 10; cursor: pointer; border-radius: 6px; border: 1px solid #00ff4133; }
-        .bk-cvh { position: absolute; top: 0; height: 100%; background: #000d00; overflow: hidden; transition: transform .6s cubic-bezier(.4,0,.2,1); }
-        #bk-cvL { left: 0; width: 50%; border-radius: 6px 0 0 6px; }
-        #bk-cvR { left: 50%; width: 50%; border-radius: 0 6px 6px 0; }
-        .bk-cmc { position: absolute; font-family: 'Courier New',monospace; pointer-events: none; opacity: 0; animation: bk-fall linear infinite; }
-        #bk-cover-center { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; flex-direction: column; pointer-events: none; z-index: 11; }
-        .bk-cover-title { font-size: clamp(12px,2.4vw,17px); font-weight: bold; color: #00ff41; text-align: center; letter-spacing: 2px; text-transform: uppercase; line-height: 1.5; margin-top: 8px; }
-        #bk-cover-hint { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); font-size: clamp(20px, 5vw, 26px); font-weight: bold; color: #00ff4199; white-space: nowrap; animation: bk-blink 1.5s infinite; z-index: 12; }
-        @keyframes bk-blink { 0%,100%{opacity:.4} 50%{opacity:1} }
-        #bk-counter { position: absolute; top: -22px; right: 0; font-size: 9px; color: #00ff4144; font-family: 'Courier New',monospace; }
-        #bk-nav-l, #bk-nav-r { position: absolute; bottom: -22px; font-size: 9px; color: #ffffff18; font-family: 'Courier New',monospace; cursor: pointer; }
-        #bk-nav-l { left: 0; } #bk-nav-r { right: 0; }
+  /* Vinyl record */
+  .vinyl-wrap {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 28px;
+  }
+  .vinyl {
+    width: 140px; height: 140px;
+    border-radius: 50%;
+    background: conic-gradient(
+      #1a1a2e 0deg 20deg, #16213e 20deg 40deg, #1a1a2e 40deg 60deg,
+      #16213e 60deg 80deg, #1a1a2e 80deg 100deg, #16213e 100deg 120deg,
+      #1a1a2e 120deg 140deg, #16213e 140deg 160deg, #1a1a2e 160deg 180deg,
+      #16213e 180deg 200deg, #1a1a2e 200deg 220deg, #16213e 220deg 240deg,
+      #1a1a2e 240deg 260deg, #16213e 260deg 280deg, #1a1a2e 280deg 300deg,
+      #16213e 300deg 320deg, #1a1a2e 320deg 340deg, #16213e 340deg 360deg
+    );
+    box-shadow: 0 0 0 4px rgba(255,255,255,0.05), 0 0 40px rgba(123,47,255,0.3);
+    position: relative;
+    transition: box-shadow 0.3s;
+  }
+  .vinyl.spinning {
+    animation: spin 2s linear infinite;
+    box-shadow: 0 0 0 4px rgba(255,60,172,0.2), var(--glow-pink), var(--glow-purple);
+  }
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  .vinyl-center {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--accent2) 0%, var(--accent) 100%);
+    box-shadow: 0 0 20px rgba(255,60,172,0.6);
+  }
+  .vinyl-center::after {
+    content: '';
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--bg);
+  }
 
-        #captcha-container, #password-container {
-            display: none; position: absolute; z-index: 50;
-            background: rgba(0,0,0,0.9); border: 2px solid #ff1493; border-radius: 10px;
-            padding: 20px; text-align: center; color: #fff; pointer-events: auto; max-width: 90vw;
-        }
-        #password-container { border-color: #00ffff; }
-        .captcha-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 20px 0; max-width: 300px; margin-left: auto; margin-right: auto; }
-        .captcha-item { width: 70px; height: 70px; background: #222; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 2rem; cursor: pointer; transition: transform 0.2s; position: relative; overflow: hidden; }
-        .captcha-item.selected { transform: scale(0.96); border: 2px solid #ff1493; }
-        .captcha-item.selected::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: conic-gradient(transparent, transparent, transparent, #ff1493); animation: spin 1.5s linear infinite; }
-        .captcha-item.selected::after { content: ''; position: absolute; inset: 3px; background: #222; border-radius: 5px; }
-        .captcha-emoji { position: relative; z-index: 2; }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
+  /* Status area */
+  .status-area {
+    text-align: center;
+    min-height: 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
 
-        #password-input {
-            background: transparent; border: none; border-bottom: 2px solid #00ffff;
-            color: #00ffff; font-size: 2rem; text-align: center; outline: none; margin: 20px 0;
-            font-family: 'Courier New', monospace; width: 80%;
-        }
+  .status-text {
+    font-size: 16px;
+    color: var(--muted);
+    font-family: 'Space Mono', monospace;
+  }
 
-        #fireworks-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 50; overflow: hidden; }
-        .firework { position: absolute; font-size: 3rem; animation: explode 1s ease-out forwards; filter: drop-shadow(0 0 15px #fff); }
-        @keyframes explode { 0% { transform: scale(0.5); opacity: 0; } 50% { transform: scale(1.5); opacity: 1; } 100% { transform: scale(2); opacity: 0; } }
+  .question-label {
+    font-size: 11px;
+    font-family: 'Space Mono', monospace;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
 
-        #finale-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 3; opacity: 0; transition: opacity 1.5s ease; }
-        #finale-canvas.visible { opacity: 1; }
-        #final-btn-container { display: none; position: fixed; z-index: 200; top: 50%; left: 50%; transform: translate(-50%, -50%); }
-    </style>
+  /* Progress bar */
+  .progress-wrap {
+    width: 100%;
+    max-width: 300px;
+    height: 4px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-top: 8px;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent2), var(--accent));
+    border-radius: 2px;
+    width: 0%;
+    transition: width 0.1s linear;
+  }
+
+  /* Wave visualizer */
+  .wave-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    height: 30px;
+    margin-top: 10px;
+  }
+  .wave-bar {
+    width: 3px;
+    border-radius: 2px;
+    background: linear-gradient(to top, var(--accent2), var(--accent));
+    animation: wave 0.8s ease-in-out infinite;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .wave-wrap.active .wave-bar { opacity: 1; }
+  @keyframes wave {
+    0%, 100% { height: 4px; }
+    50% { height: 24px; }
+  }
+  .wave-bar:nth-child(1) { animation-delay: 0s; }
+  .wave-bar:nth-child(2) { animation-delay: 0.1s; }
+  .wave-bar:nth-child(3) { animation-delay: 0.2s; }
+  .wave-bar:nth-child(4) { animation-delay: 0.15s; }
+  .wave-bar:nth-child(5) { animation-delay: 0.05s; }
+  .wave-bar:nth-child(6) { animation-delay: 0.25s; }
+  .wave-bar:nth-child(7) { animation-delay: 0.1s; }
+  .wave-bar:nth-child(8) { animation-delay: 0.3s; }
+
+  /* Play button */
+  .play-btn {
+    background: linear-gradient(135deg, var(--accent2), var(--accent));
+    border: none;
+    border-radius: 50px;
+    color: white;
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    padding: 14px 36px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+    box-shadow: var(--glow-purple);
+    letter-spacing: 0.5px;
+    margin-top: 12px;
+  }
+  .play-btn:hover { transform: translateY(-2px) scale(1.02); box-shadow: 0 0 50px rgba(123,47,255,0.6); }
+  .play-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
+
+  /* Answer options */
+  .options-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .option-btn {
+    background: var(--surface);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 16px 14px;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.25s ease;
+    position: relative;
+    overflow: hidden;
+    line-height: 1.3;
+  }
+  .option-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, var(--accent2), var(--accent));
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .option-btn:hover:not(:disabled)::before { opacity: 0.08; }
+  .option-btn:hover:not(:disabled) {
+    border-color: rgba(123,47,255,0.4);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  }
+  .option-btn:disabled { cursor: not-allowed; }
+  .option-btn.correct { background: rgba(0,255,157,0.1); border-color: var(--correct); color: var(--correct); }
+  .option-btn.wrong { background: rgba(255,68,68,0.1); border-color: var(--wrong); color: var(--wrong); }
+  .option-btn.revealed { background: rgba(0,255,157,0.05); border-color: rgba(0,255,157,0.3); color: var(--correct); opacity: 0.7; }
+
+  .option-letter {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px; height: 22px;
+    border-radius: 6px;
+    background: rgba(255,255,255,0.06);
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: var(--muted);
+  }
+
+  .option-name { display: block; font-size: 13px; font-weight: 700; }
+  .option-artist { display: block; font-size: 11px; font-weight: 400; color: var(--muted); margin-top: 2px; }
+
+  /* Result feedback */
+  .feedback {
+    text-align: center;
+    padding: 16px;
+    border-radius: 14px;
+    font-size: 15px;
+    font-weight: 700;
+    margin-top: 16px;
+    display: none;
+  }
+  .feedback.show { display: block; }
+  .feedback.correct-fb { background: rgba(0,255,157,0.1); border: 1px solid rgba(0,255,157,0.3); color: var(--correct); }
+  .feedback.wrong-fb { background: rgba(255,68,68,0.1); border: 1px solid rgba(255,68,68,0.3); color: var(--wrong); }
+
+  /* Next button */
+  .next-btn {
+    width: 100%;
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 16px;
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    padding: 16px;
+    cursor: pointer;
+    margin-top: 14px;
+    display: none;
+  }
+  .next-btn:hover { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.2); transform: translateY(-1px); }
+  .next-btn.show { display: block; }
+
+  /* End screen */
+  .end-screen { display: none; text-align: center; }
+  .end-screen.show { display: block; }
+
+  .end-emoji { font-size: 64px; display: block; margin-bottom: 16px; }
+  .end-title {
+    font-size: 32px; font-weight: 800; margin-bottom: 8px;
+    background: linear-gradient(90deg, var(--gold), var(--accent));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .end-score-big { font-size: 64px; font-weight: 800; color: var(--gold); font-family: 'Space Mono', monospace; line-height: 1; margin: 16px 0; }
+  .end-detail { color: var(--muted); font-size: 14px; font-family: 'Space Mono', monospace; margin-bottom: 32px; }
+
+  /* Hidden YouTube iframe */
+  #yt-player {
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    opacity: 0.01;
+    pointer-events: none;
+    z-index: -100;
+    top: 0;
+  }
+
+  /* Countdown overlay */
+  .countdown-ring {
+    position: relative;
+    width: 60px; height: 60px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    margin-top: 8px;
+  }
+  .countdown-ring.show { display: flex; }
+  .countdown-ring svg { position: absolute; top: 0; left: 0; transform: rotate(-90deg); }
+  .countdown-ring circle { fill: none; stroke-width: 3; stroke-linecap: round; }
+  .countdown-ring circle.bg { stroke: rgba(255,255,255,0.08); }
+  .countdown-ring circle.progress { stroke: url(#grad); transition: stroke-dashoffset 0.1s linear; }
+  .countdown-num { font-family: 'Space Mono', monospace; font-size: 18px; font-weight: 700; color: var(--accent3); z-index: 1; }
+
+  /* ========================================= */
+  /* DEBUG PANEL STYLES                        */
+  /* ========================================= */
+  .debug-panel {
+    width: 320px;
+    background: #0b0b14;
+    border-left: 2px solid var(--accent);
+    padding: 20px;
+    overflow-y: auto;
+    max-height: 100vh;
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    position: relative;
+    z-index: 50;
+    box-shadow: -10px 0 30px rgba(0,0,0,0.5);
+  }
+
+  .debug-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    padding-bottom: 10px;
+  }
+
+  .debug-header h3 {
+    color: var(--accent3);
+    font-family: 'Syne', sans-serif;
+    font-size: 16px;
+    margin: 0;
+  }
+
+  .debug-clear {
+    background: none;
+    border: 1px solid var(--muted);
+    color: var(--muted);
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-size: 10px;
+    cursor: pointer;
+  }
+
+  .debug-clear:hover { background: rgba(255,255,255,0.1); color: white; }
+
+  .log-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .log-entry {
+    background: rgba(255,255,255,0.03);
+    padding: 8px;
+    border-radius: 6px;
+    word-break: break-word;
+    border-left: 3px solid transparent;
+  }
+
+  .log-time { color: var(--muted); font-size: 10px; display: block; margin-bottom: 2px; }
+  .log-info { border-color: var(--accent3); color: #e0e0ff; }
+  .log-success { border-color: var(--correct); color: var(--correct); }
+  .log-warn { border-color: var(--gold); color: var(--gold); }
+  .log-error { border-color: var(--wrong); color: var(--wrong); background: rgba(255,68,68,0.1); font-weight: bold; }
+
+  @media (max-width: 1000px) {
+    body { flex-direction: column; }
+    .debug-panel {
+      width: 100%;
+      height: 250px;
+      border-left: none;
+      border-top: 2px solid var(--accent);
+      box-shadow: 0 -10px 30px rgba(0,0,0,0.5);
+    }
+    .options-grid { grid-template-columns: 1fr; }
+  }
+</style>
 </head>
 <body>
 
-    <div id="matrix-rotator">
-        <canvas id="matrix-canvas-1" style="position: absolute; top: 0; left: 0;"></canvas>
-        <canvas id="matrix-canvas-2" style="position: absolute; top: 100%; left: 0;"></canvas>
-    </div>
+<div class="particles" id="particles"></div>
+<div id="yt-player"></div>
 
-    <canvas id="finale-canvas"></canvas>
-    <div id="fireworks-container"></div>
-
-    <div id="book-container">
-      <div id="bk-stage">
-        <div id="bk-inner">
-          <div class="bk-gut" id="bk-gut"></div>
-          <div id="bk-pr-next"></div>
-          <div id="bk-pl"></div>
-          <div id="bk-prw">
-            <div class="bk-pf" id="bk-pf"></div>
-            <div class="bk-pb" id="bk-pb"></div>
-          </div>
-        </div>
-        <div id="bk-cover">
-          <div class="bk-cvh" id="bk-cvL"></div>
-          <div class="bk-cvh" id="bk-cvR"></div>
-          <div id="bk-cover-center">
-            <div style="font-size:26px;margin-bottom:8px">🌸</div>
-            <div class="bk-cover-title">Альбомчік<br>для Ксю</div>
-          </div>
-          <div id="bk-cover-hint">▶ натисни щоб відкрити</div>
-        </div>
-        <div id="bk-counter"></div>
-        <div id="bk-nav-l"></div>
-        <div id="bk-nav-r"></div>
+<div class="main-content">
+  <div class="container">
+    <div class="header">
+      <div class="logo">
+        <div class="logo-icon">🎵</div>
+        <h1>Вгадай Мелодію</h1>
       </div>
+      <p class="subtitle">Guess The Beat · Music Quiz</p>
     </div>
 
-    <button id="start-btn" class="btn-base" style="position:absolute; z-index:100;" onclick="startSurprise()">Летс Ксю!</button>
+    <div class="score-bar">
+      <div class="score-item"><span class="score-label">Раунд</span><span class="score-value" id="round-display">1 / 5</span></div>
+      <div class="score-divider"></div>
+      <div class="score-item"><span class="score-label">Правильно</span><span class="score-value gold" id="correct-display">0</span></div>
+      <div class="score-divider"></div>
+      <div class="score-item"><span class="score-label">Очки</span><span class="score-value" id="score-display">0</span></div>
+    </div>
 
-    <div id="content-wrapper">
-        <div id="message-container"></div>
-        <div id="choice-panel" class="ui-panel">
-            <button class="btn-base" onclick="sendTG('Клік: 0^1'); handleChoice('0^1', false)">0^1</button>
-            <button class="btn-base" onclick="sendTG('Клік: 1^0'); handleChoice('1^0', true)">1^0</button>
+    <div class="round-dots" id="round-dots">
+      <div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+    </div>
+
+    <div class="game-card" id="game-area">
+      <div class="vinyl-wrap">
+        <div class="vinyl" id="vinyl"><div class="vinyl-center"></div></div>
+      </div>
+
+      <div class="status-area" id="status-area">
+        <p class="question-label">Хто виконує цю пісню?</p>
+        <p class="status-text" id="status-text">Ініціалізація...</p>
+
+        <div class="wave-wrap" id="wave">
+          <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+          <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
         </div>
 
-        <div id="quiz-panel" class="ui-panel" style="display:none; grid-template-columns: 1fr 1fr; gap:10px;">
-            <button class="btn-base" onclick="sendTG('Клік: мяу'); handleQuiz('мяу')">мяу</button>
-            <button class="btn-base" onclick="sendTG('Клік: політех'); handleQuiz('політех')">політех</button>
-            <button class="btn-base" onclick="sendTG('Клік: там голосове'); handleAlbum1()">там голосове</button>
-            <button class="btn-base" onclick="sendTG('Клік: жду ссилки'); handleSecretLevel()">жду ссилки</button>
+        <div class="progress-wrap" id="prog-wrap" style="display:none"><div class="progress-fill" id="prog-fill"></div></div>
+
+        <div class="countdown-ring" id="countdown-ring">
+          <svg width="60" height="60" viewBox="0 0 60 60">
+            <defs>
+              <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" style="stop-color:#7b2fff"/>
+                <stop offset="100%" style="stop-color:#ff3cac"/>
+              </linearGradient>
+            </defs>
+            <circle class="bg" cx="30" cy="30" r="26"/>
+            <circle class="progress" id="countdown-circle" cx="30" cy="30" r="26" stroke-dasharray="163.4" stroke-dashoffset="0"/>
+          </svg>
+          <span class="countdown-num" id="countdown-num">5</span>
         </div>
+
+        <button class="play-btn" id="play-btn" onclick="playSnippet()" disabled>
+          ▶ Слухати фрагмент
+        </button>
+      </div>
+
+      <div class="feedback" id="feedback"></div>
     </div>
 
-    <div id="captcha-container">
-        <h3 style="margin:0">Знайдіть всіх Тімурів</h3>
-        <div class="captcha-grid" id="captcha-grid"></div>
-        <p id="captcha-error" style="color:red; display:none; margin-top:10px;">Помилка! Спробуй ще.</p>
-        <button class="btn-base" onclick="verifyCaptcha()">Підтвердити</button>
+    <div class="options-grid" id="options-grid"></div>
+
+    <button class="next-btn" id="next-btn" onclick="nextRound()">Наступний раунд →</button>
+
+    <div class="end-screen" id="end-screen">
+      <span class="end-emoji" id="end-emoji">🎉</span>
+      <div class="end-title" id="end-title">Чудова гра!</div>
+      <div class="end-score-big" id="end-score-big">0</div>
+      <div class="end-detail" id="end-detail">0 з 5 правильних відповідей</div>
+      <button class="restart-btn" onclick="restartGame()">🔄 Грати знову</button>
     </div>
+  </div>
+</div>
 
-    <div id="password-container">
-        <h3 style="margin:0">Фейс-контроль 🕵️‍♀️</h3>
-        <p style="margin:5px 0">Доведи, що ти справжня Ксю! Введи повний шифр нашої групи (згадай перший курс):</p>
-        <input type="text" id="password-input" placeholder="..." autocomplete="off" onkeydown="if(event.key==='Enter') checkPasswordManual()">
-        <br>
-        <button class="btn-base" onclick="checkPasswordManual()">Ввести</button>
-        <button id="hint-btn" class="btn-base" style="display:none; border-color:#00ffff; color:#00ffff;" onclick="showHint()">Підказка</button>
-        <p id="password-hint" style="color:yellow; display:none; margin-top:10px;">Підказка: повний, через дефіс, без пробілів (051...)</p>
-        <p id="password-error" style="color:red; display:none; margin-top:10px;">ні ні спробуй ще</p>
+<div class="debug-panel">
+  <div class="debug-header">
+    <h3>Відлагодження (Logs)</h3>
+    <button class="debug-clear" onclick="document.getElementById('log-container').innerHTML=''">Очистити</button>
+  </div>
+  <div class="log-container" id="log-container">
     </div>
-
-    <div id="final-btn-container">
-        <button class="btn-base" onclick="sendTG('Натиснуто: Обов\'язково набери'); location.reload()">Обов'язково набери як будеш вільна 📞</button>
-    </div>
-
-    <canvas id="game-canvas" width="700" height="900"></canvas>
-
-    <audio id="bg-music" loop><source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" type="audio/mpeg"></audio>
-    <audio id="bg-music-secret" loop><source src="1.mp3" type="audio/mpeg"></audio>
-
-    <script>
-        // ==========================================
-        // TELEGRAM BOT
-        // ==========================================
-        const TG_TOKEN = "8612287641:AAF7dkNyoA34A35xay3CJuKmHwq7IFyhgnQ";
-        const TG_CHAT_ID = "8538026219";
-
-        function sendTG(msg) {
-            try {
-                fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${TG_CHAT_ID}&text=${encodeURIComponent(msg)}`)
-                .catch(e => console.log('TG Error:', e));
-            } catch(e) { console.log(e); }
-        }
-
-        // ==========================================
-        // НАЛАШТУВАННЯ ЧАСУ ТА ГРИ
-        // ==========================================
-        const CONFIG = {
-            getDisplayTime: function(htmlText) {
-                const plainText = htmlText.replace(/<[^>]*>?/gm, '').trim();
-                const wordCount = plainText.split(/\s+/).filter(w => w.length > 0).length;
-                if (wordCount <= 4) return 1000;
-                if (wordCount <= 7) return 2000;
-                if (wordCount <= 9) return 3000;
-                if (wordCount <= 11) return 4000;
-                if (wordCount <= 13) return 5000;
-                return 6500;
-            },
-            textFadeOutDelay: 60,
-            birdGravity: 1.0,
-            birdLift: -9.5,
-            pipeSpeed: 4.8,
-            pipeSpawnRate: 67,
-            difficulty: 1.1,
-            matrixRotationSpeed: 0.1,
-            matrixColorSpeed: 0.002
-        };
-
-        function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
-        function getDisplayTime(html) { return CONFIG.getDisplayTime(html); }
-
-        // ==========================================
-        // ЗМІННІ ТА ЕЛЕМЕНТИ
-        // ==========================================
-        const rotator = document.getElementById('matrix-rotator');
-        const canvas1 = document.getElementById('matrix-canvas-1'); const ctx1 = canvas1.getContext('2d');
-        const canvas2 = document.getElementById('matrix-canvas-2'); const ctx2 = canvas2.getContext('2d');
-        const gameCanvas = document.getElementById('game-canvas'); const gameCtx = gameCanvas.getContext('2d');
-        const msgContainer = document.getElementById('message-container');
-        const choicePanel = document.getElementById('choice-panel');
-        const quizPanel = document.getElementById('quiz-panel');
-        const audio1 = document.getElementById('bg-music');
-        const audio2 = document.getElementById('bg-music-secret');
-        const fwContainer = document.getElementById('fireworks-container');
-        const finalBtnContainer = document.getElementById('final-btn-container');
-        const finaleCanvas = document.getElementById('finale-canvas');
-
-        const phraseUA = "З ДНЕМ НАРОДЖЕННЯ КСЮ "; const phraseEN = "HAPPY BIRTHDAY KSYU ";
-        let columns = Math.floor((window.innerWidth || 800) * 2.875 / 18) || 10;
-        let drops = Array.from({length: columns}).map(() => Math.floor(Math.random() * ((window.innerHeight || 800) * 2.875 / 18)));
-        let charIndices = Array(columns).fill(0);
-
-        let isGlobalPause = false, isScrolling = false, time = 0, offsetScrollY = 0, msgIndex = 0, activeAlbum = 1;
-        let currentAngle = 0, matrixColorHue = 0, isGameRunning = false, stopMatrixSpawning = false;
-        let isGrandFinaleSpin = false, isGrandFinaleParty = false;
-
-        const albumImages1 = ["1.jpg","2.jpg","3.jpg","4.jpg","5.jpg","6.jpg","7.jpg","8.jpg","9.jpg","10.jpg"];
-        const albumImages2 = ["11.jpg","12.jpg","13.jpg","14.jpg","15.jpg","16.jpg","17.jpg","18.jpg","19.jpg","20.jpg"];
-
-        let bkImages = [], bkPage = 0, bkTotal = 0, bkAnim = false;
-        let bkIsLast = false, bkCoverOpen = false;
-        let bookClosedResolve = null;
-        const MCHARS = 'ЗДНЕМОЛЯABCDE0123456789@#$%';
-
-        // ==========================================
-        // МАСИВИ ТЕКСТІВ
-        // ==========================================
-        const messages = [
-            "Йоу, Ксю! З твоїм днем! З Днем народження! 🥳",
-            "Аж не віриться, що тобі вже 25... Хоча знаєш, у твої 24 віриться більше! 😁",
-            "Бажаю тобі нескінченного драйву, легких рішень і щоб кожен день приносив кайф!",
-            "Нехай у твоєму житті буде стільки ж яскравих моментів, скільки зірок на небі.",
-            "Завжди залишайся такою ж харизматичною, енергійною та просто неперевершеною!",
-            "Але перед тим, як ми підемо далі, давай згадаємо нашу першу зустріч...",
-            "Тож, що все-таки дорівнює одиниці?",
-            "Пфф! Я навіть не сумнівався. Ти ж у нас геній!",
-            "Я знаю, що ти обожнюєш тримати все під контролем (у хорошому сенсі, звісно).",
-            "І тобі це дуже личить, бо ти вмієш блискуче організувати будь-яку ситуацію і знайти вихід з будь-якого лабіринту проблем.",
-            "Але скажи чесно... зараз у тебе все йде за планом?",
-            "Чи матриця вже вийшла з-під контролю і ти просто виконуєш мої алгоритми? 😎",
-            "Лан, розслабся і просто насолоджуйся",
-            "Ксюша, ми всі тебе дуже любимо і бажаємо фінансового зльоту та душевного дзену.",
-            "Щоб усі твої найамбітніші цілі досягалися по клацанню пальців!",
-            "А зараз твій вибір вирішить наш подальший шлях...",
-            "Що я тобі відправив у тг 4 листопада 2021 року о 21:01?"
-        ];
-
-        const postAlbum1Texts = [
-            "Ну шо, закрила альбомчік? А тепер подивись мені в очі (через екран).",
-            "Ці фотки — то лише маленька частинка всього того трешу, шо ми пережили.",
-            "Зараз буде невелика перевірочка, шоб я знав, шо це точно ти.",
-            "Бач, всіх Тімурів треба знати в лице!",
-            "Слухай, а пам'ятаєш наші «четверги»? Наша залізна традиція кудись вибиратися то в Пурі чвені, то в якиийсь інший заклад",
-            "То ж бажаю, щоб у твоєму житті завжди знаходився час на такі безтурботні і кайфові моменти!",
-            "Оо, а памятаєш ті уроки англійської? Ти мій найкращий особистий репетитор.",
-            "Тому нехай світ повертає тобі стільки ж добра, турботи і крутих шансів, скільки ти даруєш іншим!",
-            "А ті наші нічні вокальні концерти в Одесі перед сном? Це був абсолютний відрив!",
-            "То ж нехай у тебе завжди буде настрій співати від душі, а поруч будуть люди, які підхоплять твій вайб.",
-            "Ось ти обрала варіант «там голосове»... а що ж у ньому було?",
-            "Може треба було обрати саме те, що говорилося там? Спробуй ще раз!",
-            "Залишайся такою ж яскравою і неповторною. Будь самою-самою, наша Ксюша! 🥂"
-        ];
-
-        const postAlbum2Texts = [
-            "Ти пройшла цей секретний левел... Значить, пора розказати всьо як є.",
-            "Всі ці картинки — то просто п!кселі, але наші спогади — це те, шо робить нас справжніми.",
-            "Обіцяю більше ніколи не відкривати двері в твоє життя «з ноги», як тоді, коли я привітвся з тобою матом 😂",
-            "То ж нехай у твоє життя всі радощі заходять ефектно, але обов'язково м'яко і без нервів!",
-            "А пам'ятаєш, як ми ламали голову, як тебе підписати? 051:Ксенія не підходить, Ксю - теж не те, і ти видала: «Не будет у тебя Ксюши!».",
-            "Тому бажаю, щоб тебе оточували лише ті люди, з якими так само легко і весело придумувати всяку діч.",
-            "Доступ підтверджено. А то я вже подумав, що ти хацкер.",
-            "Оо, а згадай Новий 2022 рік... Ти подарувала мені спортивну сумку, і жодна поїздка не обходиться без неї. Це лише один приклад твоєї влучності!",
-            "То ж нехай життя щодня підкидає тобі найкорисніші подарунки і сюрпризи, про які ти навіть не мріяла!",
-            "А пам'ятаєш наш надсекретний план «Любімка» проти тої Кіри? Ми так старанно його розробляли...",
-            "А потім він перетворився на цілу епопею з купою мемів і спільних жартів.",
-            "Тому бажаю тобі сміливості на нові драйвові авантюри і щоб поруч завжди був надійний напарник.",
-            "А як ми планували поїздку у Вільнюс? Я мав приїхати, але війна сплутала всі карти.",
-            "То ж бажаю, щоб попереду в тебе були сотні нових країн, де ти гулятимеш красивими вулицями, а я обов'язково складу компанію!",
-            "Ти неймовірно креативна, глибока, душевна і турботлива. Дякую тобі за те, шо ти є.",
-            "Ми зараз рідко бачимося, але це н!коли <span class=\"strike\">не перекреслить</span> наших крутих спогадів.",
-            "Я завжди буду поруч (навіть якщо і онлайн), щоб підтримати тебе, посміятися з тобою і просто бути твоїм другом.",
-            "Сяй яскравіше за всі неони, бо ти наша зірочка, ти наша Ксю! 🌟",
-            "Просто будь найщасливішою! ❤️"
-        ];
-
-        // ==========================================
-        // ЛОГІКА АЛЬБОМІВ
-        // ==========================================
-        function bkSpawnMC(el, n) {
-            for (let i = 0; i < n; i++) {
-                const d = document.createElement('div'); d.className = 'bk-mc';
-                d.style.left = Math.random()*95+'%'; d.style.top = Math.random()*90+'%';
-                d.style.fontSize = (8+Math.random()*5)+'px'; d.style.color = '#00ff41';
-                d.style.animationDuration = (1+Math.random()*3)+'s'; d.style.animationDelay = (Math.random()*4)+'s';
-                d.textContent = MCHARS[Math.floor(Math.random()*MCHARS.length)];
-                el.appendChild(d);
-            }
-        }
-
-        function buildBook(images, isSecret) {
-            bkImages = images; bkTotal = images.length;
-            bkPage = 0; bkAnim = false; bkIsLast = false; bkCoverOpen = false;
-            const cvL = document.getElementById('bk-cvL'), cvR = document.getElementById('bk-cvR');
-            cvL.innerHTML = ''; cvR.innerHTML = '';
-            bkSpawnMC(cvL, 12); bkSpawnMC(cvR, 12);
-            document.getElementById('book-container').style.display = 'flex';
-            bkRenderStatic();
-            document.getElementById('bk-cover').style.display = 'block';
-            document.getElementById('bk-cover-hint').style.display = 'block';
-            document.getElementById('bk-cvL').style.transform = ''; document.getElementById('bk-cvR').style.transform = '';
-            document.getElementById('bk-cover').onclick = bkOpenCover;
-            document.getElementById('bk-counter').textContent = '';
-            document.getElementById('bk-nav-l').textContent = ''; document.getElementById('bk-nav-r').textContent = '';
-        }
-
-        function bkMakePage(imgSrc) {
-            const div = document.createElement('div'); div.className = 'bk-pc';
-            bkSpawnMC(div, 8);
-            ['bk-tl','bk-tr','bk-bl','bk-br'].forEach(c => { const el = document.createElement('div'); el.className = 'bk-cm ' + c; div.appendChild(el); });
-            if (imgSrc) {
-                const img = document.createElement('img'); img.src = imgSrc;
-                img.onerror = function() { if (this.src.endsWith('.jpg')) { this.src = this.src.replace('.jpg', '.JPG'); } };
-                div.appendChild(img);
-            }
-            return div;
-        }
-
-        function bkMakeLastPage() {
-            const div = document.createElement('div'); div.className = 'bk-pc';
-            bkSpawnMC(div, 8);
-            ['bk-tl','bk-tr','bk-bl','bk-br'].forEach(c => { const el = document.createElement('div'); el.className = 'bk-cm ' + c; div.appendChild(el); });
-            const e = document.createElement('div'); e.style.cssText = 'font-size:clamp(24px,5vw,40px);position:relative;z-index:2'; e.textContent = '🌸'; div.appendChild(e);
-            const t = document.createElement('div'); t.style.cssText = 'font-size:9px;color:#00ff4166;letter-spacing:2px;margin-top:8px;z-index:2;position:relative'; t.textContent = '// EOF //'; div.appendChild(t);
-            return div;
-        }
-
-        function bkRenderStatic() {
-            const plEl = document.getElementById('bk-pl'), prwEl = document.getElementById('bk-prw');
-            const pfEl = document.getElementById('bk-pf'), pbEl = document.getElementById('bk-pb');
-            const prNext = document.getElementById('bk-pr-next'), gut = document.getElementById('bk-gut');
-            prwEl.style.transition = 'none'; prwEl.style.transform = 'rotateY(0deg)';
-            plEl.innerHTML = ''; pfEl.innerHTML = ''; pbEl.innerHTML = ''; prNext.innerHTML = '';
-            if (bkIsLast) {
-                gut.style.opacity = '0'; prwEl.style.display = 'none'; plEl.appendChild(bkMakeLastPage()); prNext.style.display = 'none';
-                if (bkCoverOpen) { plEl.onclick = null; setTimeout(() => { bkCloseAlbumFinal(); }, 1000); }
-            } else {
-                gut.style.opacity = '1'; prwEl.style.display = 'block'; prNext.style.display = 'block';
-                plEl.appendChild(bkMakePage(bkImages[bkPage])); pfEl.appendChild(bkMakePage(bkImages[bkPage+1]));
-                pbEl.appendChild(bkPage+2 >= bkTotal ? bkMakeLastPage() : bkMakePage(bkImages[bkPage+2]));
-                prNext.appendChild(bkPage+3 >= bkTotal ? bkMakeLastPage() : bkMakePage(bkImages[bkPage+3]));
-                if (bkCoverOpen) bkAttachHandlers();
-            }
-            requestAnimationFrame(() => requestAnimationFrame(() => { prwEl.style.transition = 'transform .7s cubic-bezier(.645,.045,.355,1)'; bkAnim = false; }));
-            if (bkCoverOpen) bkUpdateUI();
-        }
-
-        function bkAttachHandlers() {
-            document.getElementById('bk-pl').onclick = () => { if (bkIsLast) bkCloseAlbum(); else if (bkPage === 0) bkCloseToCover(); else bkFlipBack(); };
-            document.getElementById('bk-prw').onclick = () => bkFlipFwd();
-        }
-
-        function bkAddSheen(el) {
-            const sh = document.createElement('div'); sh.className = 'bk-sheen'; el.appendChild(sh);
-            requestAnimationFrame(() => requestAnimationFrame(() => sh.classList.add('go')));
-            setTimeout(() => { if (sh.parentNode) sh.remove(); }, 760);
-        }
-
-        function bkOpenCover() {
-            if (bkAnim || bkCoverOpen) return; bkAnim = true;
-            document.getElementById('bk-cover-hint').style.display = 'none';
-            document.getElementById('bk-cvL').style.transform = 'translateX(-104%)'; document.getElementById('bk-cvR').style.transform = 'translateX(104%)';
-            setTimeout(() => { document.getElementById('bk-cover').style.display = 'none'; bkCoverOpen = true; bkAnim = false; bkAttachHandlers(); bkUpdateUI(); }, 580);
-        }
-
-        function bkCloseToCover() {
-            if (bkAnim) return; bkAnim = true; bkCoverOpen = false;
-            const cvL = document.getElementById('bk-cvL'), cvR = document.getElementById('bk-cvR');
-            cvL.style.transition = 'none'; cvR.style.transition = 'none';
-            cvL.style.transform = 'translateX(-104%)'; cvR.style.transform = 'translateX(104%)';
-            document.getElementById('bk-cover').style.display = 'block'; document.getElementById('bk-cover-hint').style.display = 'block';
-            requestAnimationFrame(() => requestAnimationFrame(() => {
-                cvL.style.transition = 'transform .6s cubic-bezier(.4,0,.2,1)'; cvR.style.transition = 'transform .6s cubic-bezier(.4,0,.2,1)';
-                cvL.style.transform = ''; cvR.style.transform = '';
-                setTimeout(() => { bkPage = 0; bkIsLast = false; bkAnim = false; bkRenderStatic(); document.getElementById('bk-counter').textContent = ''; document.getElementById('bk-nav-l').textContent = ''; document.getElementById('bk-nav-r').textContent = ''; }, 620);
-            }));
-        }
-
-        function bkFlipFwd() {
-            if (bkAnim) return; bkAnim = true; bkAddSheen(document.getElementById('bk-pf')); document.getElementById('bk-prw').style.transform = 'rotateY(-180deg)';
-            setTimeout(() => { if (bkPage + 2 >= bkTotal) bkIsLast = true; else bkPage += 2; bkRenderStatic(); }, 680);
-        }
-
-        function bkFlipBack() {
-            if (bkAnim || bkPage === 0) return; bkAnim = true;
-            const prwEl = document.getElementById('bk-prw'), plEl = document.getElementById('bk-pl'), pfEl = document.getElementById('bk-pf'), pbEl = document.getElementById('bk-pb'), prNext = document.getElementById('bk-pr-next'), prevPage = bkPage - 2;
-            plEl.innerHTML = ''; pfEl.innerHTML = ''; pbEl.innerHTML = ''; prNext.innerHTML = '';
-            plEl.appendChild(bkMakePage(bkImages[prevPage])); pfEl.appendChild(bkMakePage(bkImages[prevPage+1]));
-            pbEl.appendChild(bkMakePage(bkImages[bkPage])); prNext.appendChild(bkMakePage(bkImages[bkPage+1]));
-            prwEl.style.transition = 'none'; prwEl.style.transform = 'rotateY(-180deg)'; bkAddSheen(pbEl);
-            requestAnimationFrame(() => requestAnimationFrame(() => { prwEl.style.transition = 'transform .7s cubic-bezier(.645,.045,.355,1)'; prwEl.style.transform = 'rotateY(0deg)'; setTimeout(() => { bkPage = prevPage; bkRenderStatic(); }, 680); }));
-            bkUpdateUI();
-        }
-
-        function bkCloseAlbum() { if (bkAnim) return; bkIsLast = false; bkPage = 0; bkRenderStatic(); bkCloseToCover(); }
-
-        function bkUpdateUI() {
-            if (!bkCoverOpen) return;
-            document.getElementById('bk-counter').textContent = bkIsLast ? (bkTotal + ' / ' + bkTotal) : `${Math.min(bkPage+2, bkTotal)} / ${bkTotal}`;
-            if (bkIsLast) {
-                document.getElementById('bk-nav-l').textContent = ''; document.getElementById('bk-nav-r').textContent = '';
-                document.getElementById('bk-nav-l').onclick = null; document.getElementById('bk-nav-r').onclick = null;
-            } else {
-                document.getElementById('bk-nav-l').textContent = bkPage === 0 ? '◀ обкладинка' : '◀ назад';
-                document.getElementById('bk-nav-r').textContent = bkPage+2 < bkTotal ? 'вперед ▶' : 'остання ▶';
-                document.getElementById('bk-nav-l').onclick = () => { bkPage === 0 ? bkCloseToCover() : bkFlipBack(); }; document.getElementById('bk-nav-r').onclick = () => bkFlipFwd();
-            }
-        }
-
-        function bkCloseAlbumFinal() {
-            const c = document.getElementById('book-container'); c.style.transition = 'opacity .5s'; c.style.opacity = '0';
-            setTimeout(() => {
-                c.style.display = 'none'; c.style.opacity = '1'; c.style.transition = ''; bkPage = 0; bkIsLast = false; bkAnim = false; bkCoverOpen = false;
-                if (bookClosedResolve) { bookClosedResolve(); bookClosedResolve = null; }
-            }, 500);
-        }
-
-        // ==========================================
-        // ВІЗУАЛ ТА АНІМАЦІЇ ТЕКСТУ
-        // ==========================================
-        function setTextWordCascade(container, html) {
-            const temp = document.createElement('div'); temp.innerHTML = html;
-            const wrap = document.createElement('span'); wrap.className = 'word-cascade-wrap';
-            function processNode(node) {
-                if (node.nodeType === Node.TEXT_NODE) {
-                    const parts = node.textContent.split(/(\s+)/);
-                    parts.forEach(part => {
-                        if (part.trim() === '') return;
-                        const w = document.createElement('span'); w.className = 'w'; w.textContent = part; wrap.appendChild(w);
-                    });
-                } else if (node.nodeType === Node.ELEMENT_NODE) {
-                    const w = document.createElement('span'); w.className = 'w'; w.appendChild(node.cloneNode(true)); wrap.appendChild(w);
-                }
-            }
-            temp.childNodes.forEach(processNode);
-            wrap.querySelectorAll('.w').forEach((w, i) => w.style.animationDelay = (i * 0.1) + 's');
-            container.innerHTML = ''; container.appendChild(wrap);
-        }
-
-        const DECODE_CHARS = 'アイウエオカキクケコサシスセソ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ@#$%&';
-        let decodeInterval = null;
-        function setTextDecode(container, html) {
-            const temp = document.createElement('div'); temp.innerHTML = html;
-            const plainText = temp.textContent;
-            const wordTokens = plainText.split(/(\s+)/).map(t => ({ text: t, isSpace: /^\s+$/.test(t) }));
-            const wordCount = wordTokens.filter(t => !t.isSpace).length;
-            if (decodeInterval) clearInterval(decodeInterval);
-            const span = document.createElement('span'); span.className = 'decode-wrap';
-            container.innerHTML = ''; container.appendChild(span);
-            const framesPerWord = 3;
-            const totalFrames = wordCount * framesPerWord + 4; let iteration = 0;
-            decodeInterval = setInterval(() => {
-                const revealedWords = Math.floor(iteration / framesPerWord); let wi = 0;
-                span.textContent = wordTokens.map(t => {
-                    if (t.isSpace) return t.text;
-                    const revealed = wi < revealedWords; wi++;
-                    if (revealed) return t.text;
-                    return t.text.split('').map(() => DECODE_CHARS[Math.floor(Math.random() * DECODE_CHARS.length)]).join('');
-                }).join('');
-                iteration++;
-                if (iteration >= totalFrames) { clearInterval(decodeInterval); decodeInterval = null; span.innerHTML = html; }
-            }, 20);
-        }
-
-        function formatText(text, isSecret) {
-            let res = text.replace(/перекреслить/gi, '<span class="strike">перекреслить</span>');
-
-            const secretNames = ['Ксенія', 'Ксюша', 'Ксю', 'Сергій', 'Тимур', 'Настя', 'Іра', 'Зизо', 'Абідат', 'Ілля', 'Наташа', 'Кіра', 'Ванш', 'Тімурів', '«Любімка»', 'Ксюбінатор', 'Анжелу', 'Олега', 'Денис', 'Юрчіком', 'Юрчик', 'Ярослав', 'Яною'];
-            const goodWords = ['щастя', 'драйву', 'кайф', 'харизматичною', 'геній', 'дзену', 'зльоту', 'мрії', 'репетитор', 'Вільнюс', 'подарунки', 'сюрпризи', 'креативна', 'глибока', 'душевна', 'турботлива', 'найщасливішою', 'зірочка', 'ефектно', 'авантюри', 'першовідкривачі', 'яскравою', 'неповторною', 'енергійною', 'неперевершеною', 'красивою', 'щирості', 'вмінні'];
-
-            if (isSecret) {
-                secretNames.forEach(name => { res = res.replace(new RegExp(name, 'gi'), `<span class="key-word-secret">$&</span>`); });
-            } else {
-                secretNames.forEach(name => { res = res.replace(new RegExp(name, 'gi'), `<span class="key-word-gradient">$&</span>`); });
-            }
-            goodWords.forEach(word => { res = res.replace(new RegExp(word, 'gi'), `<span class="key-word-gradient">$&</span>`); });
-
-            return res;
-        }
-
-        function setMessageText(container, html, isSecret) {
-            if (isSecret) setTextDecode(container, html); else setTextWordCascade(container, html);
-        }
-
-        function resizeCanvases() {
-            const size = Math.max(window.innerWidth || 800, window.innerHeight || 800) * 2.875;
-            rotator.style.width = size + 'px'; rotator.style.height = size + 'px';
-            rotator.style.left = -(size - window.innerWidth)/2 + 'px'; rotator.style.top = -(size - window.innerHeight)/2 + 'px';
-            canvas1.width = size; canvas1.height = size;
-            canvas2.width = size; canvas2.height = size; canvas2.style.top = size + 'px';
-            finaleCanvas.width = window.innerWidth; finaleCanvas.height = window.innerHeight;
-            columns = Math.floor(size / 18) || 10;
-            if(drops.length < columns) {
-                const newDrops = Array.from({length: columns - drops.length}).map(() => Math.floor(Math.random() * (size / 18)));
-                drops = drops.concat(newDrops); charIndices = charIndices.concat(Array(newDrops.length).fill(0));
-            }
-        }
-        resizeCanvases();
-
-        function drawMatrix() {
-            if (isGlobalPause) return;
-            time += 0.05;
-
-            if (activeAlbum === 2 && !isGrandFinaleParty) {
-                matrixColorHue += 0.001;
-            }
-            if (isGrandFinaleParty) {
-                matrixColorHue += 0.015;
-            } else if (isGameRunning) {
-                currentAngle -= CONFIG.matrixRotationSpeed;
-                matrixColorHue += CONFIG.matrixColorSpeed;
-                rotator.style.transform = `rotate(${currentAngle}deg)`;
-            } else if (isGrandFinaleSpin) {
-                matrixColorHue += 0.005;
-                currentAngle -= 2;
-                rotator.style.transform = `rotate(${currentAngle}deg)`;
-            }
-
-            ctx1.fillStyle = 'rgba(0, 0, 0, 0.05)'; ctx1.fillRect(0, 0, canvas1.width, canvas1.height); ctx1.font = `bold 18px monospace`;
-
-            const h1 = (328 + (matrixColorHue * 360)) % 360;
-            const h2 = (348 + (matrixColorHue * 360)) % 360;
-            const currentMatrixColor = `hsl(${h1}, 100%, 54%)`;
-            const currentMatrixShadow = `hsl(${h2}, 83%, 47%)`;
-
-            if (activeAlbum === 2 || isGrandFinaleParty || isGrandFinaleSpin) {
-                msgContainer.style.color = currentMatrixColor;
-                msgContainer.style.textShadow = `0 0 16px ${currentMatrixColor}, 0 0 40px ${currentMatrixShadow}`;
-            } else {
-                msgContainer.style.color = '#ff1493';
-                msgContainer.style.textShadow = '0 0 16px #ff1493, 0 0 40px #ff0000';
-            }
-
-            for (let i = 0; i < drops.length; i++) {
-                const isUA = (i % 3 === 0); const phrase = isUA ? phraseUA : phraseEN;
-                const text = phrase[charIndices[i] % phrase.length];
-                const x = i * 18; const y = drops[i] * 18;
-                const diag = (x + y) / (canvas1.width + canvas1.height) + Math.sin(time * 0.5) * 0.1;
-                ctx1.fillStyle = diag < 0.65 ? currentMatrixColor : currentMatrixShadow;
-                ctx1.fillText(text, x, y);
-                if (!stopMatrixSpawning && y > canvas1.height && Math.random() > 0.975) drops[i] = 0;
-                drops[i]++; charIndices[i]++;
-            }
-            if (isScrolling) {
-                offsetScrollY -= 1; ctx2.clearRect(0, 0, canvas2.width, canvas2.height); ctx2.drawImage(canvas1, 0, 0);
-                canvas1.style.transform = `translateY(${offsetScrollY}px)`; canvas2.style.transform = `translateY(${offsetScrollY}px)`;
-                if (Math.abs(offsetScrollY) >= canvas1.height) offsetScrollY = 0;
-            }
-        }
-
-        let lastMatrixTime = 0;
-        function animateMatrix(timestamp) { requestAnimationFrame(animateMatrix); if (timestamp - lastMatrixTime < 50) return; lastMatrixTime = timestamp; drawMatrix(); }
-
-        function fadeOutCascade(container) {
-            return new Promise(resolve => {
-                const words = Array.from(container.querySelectorAll('.word-cascade-wrap .w'));
-                if (!words.length) { container.innerHTML = ''; resolve(); return; }
-                const d = CONFIG.textFadeOutDelay;
-                words.forEach((w, i) => { setTimeout(() => { w.classList.add('out'); }, i * d); });
-                setTimeout(() => { container.innerHTML = ''; resolve(); }, (words.length * d) + 400);
-            });
-        }
-        function fadeOutDecode(container) { return new Promise(resolve => { if (decodeInterval) { clearInterval(decodeInterval); decodeInterval = null; } container.innerHTML = ''; resolve(); }); }
-        function fadeOutContent(container) { return activeAlbum === 2 ? fadeOutDecode(container) : fadeOutCascade(container); }
-
-        async function showNextMessage() {
-            if (msgIndex >= messages.length) { activeAlbum === 1 ? startPostAlbum1Phase() : startPostAlbum2Phase(); return; }
-            const currentRawText = messages[msgIndex]; if (msgIndex === 2) isScrolling = true;
-
-            // Хакерська пауза (Імітація збою)
-            if (msgIndex === 11) {
-                isGlobalPause = true; try { audio1.pause(); } catch(e){} await fadeOutContent(msgContainer); await delay(300);
-
-                msgContainer.style.transition = "none";
-                msgContainer.style.transform = "scale(1) translateY(0)";
-                msgContainer.style.filter = "blur(0px)";
-                msgContainer.style.opacity = "1";
-                msgContainer.style.color = "#00ff00"; msgContainer.style.textShadow = "0 0 16px #00ff00, 0 0 40px #00ff00";
-
-                msgContainer.textContent = "";
-                for (const char of currentRawText) { msgContainer.textContent += char; await delay(60); }
-                await delay(1500); msgContainer.textContent = "";
-
-                msgIndex++;
-                msgContainer.textContent = "";
-                for (const char of messages[msgIndex]) { msgContainer.textContent += char; await delay(60); }
-                await delay(1000);
-
-                isGlobalPause = false; try { audio1.play(); } catch(e){}
-
-                msgContainer.style.transition = "";
-                msgContainer.style.transform = "";
-                msgContainer.style.filter = "";
-                msgContainer.style.opacity = "";
-                msgContainer.style.color = ""; msgContainer.style.textShadow = "";
-
-                msgIndex++; setTimeout(showNextMessage, 500); return;
-            }
-
-            msgContainer.className = activeAlbum === 2 ? 'text-secret' : '';
-
-            setMessageText(msgContainer, formatText(currentRawText, activeAlbum === 2), activeAlbum === 2); msgContainer.classList.add('show');
-
-            if (msgIndex === 6) { setTimeout(() => { document.getElementById('choice-panel').style.display = 'block'; }, 1000); return; }
-            if (msgIndex === 16) { setTimeout(() => { document.getElementById('quiz-panel').style.display = 'grid'; }, 1000); return; }
-
-            const d = getDisplayTime(currentRawText);
-            setTimeout(async () => { msgContainer.classList.remove('show'); await fadeOutContent(msgContainer); msgIndex++; showNextMessage(); }, d);
-        }
-
-        // ==========================================
-        // ІНТЕРАКТИВИ (ПРОЦЕСИ)
-        // ==========================================
-        function handleChoice(val, correct) {
-            sendTG(`Опитування 1 (Дата): обрано ${val} (${correct ? 'Правильно' : 'Помилка'})`);
-            document.getElementById('choice-panel').style.display = 'none';
-            if (correct) {
-                msgContainer.innerHTML = '';
-                msgIndex++;
-                showNextMessage();
-            } else {
-                setTimeout(() => location.reload(), 600);
-            }
-        }
-
-        function handleQuiz(val) {
-            sendTG(`Опитування 2: обрано ${val}`);
-            document.getElementById('quiz-panel').style.display = 'none';
-            setTimeout(() => location.reload(), 600);
-        }
-
-        function handleAlbum1() {
-            sendTG(`Опитування 2: обрано ТАМ ГОЛОСОВЕ (Сценарій 1)`);
-            activeAlbum = 1; document.getElementById('quiz-panel').style.display = 'none'; msgContainer.innerHTML = ''; msgIndex++; showNextMessage();
-        }
-
-        let selectedCaptcha = new Set(); let captchaResolve = null; let correctIndices = new Set();
-        function shuffle(array) { for (let i = array.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [array[i], array[j]] = [array[j], array[i]]; } return array; }
-
-        function showCaptcha() {
-            return new Promise(resolve => {
-                sendTG("Відкрито Капчу: Знайдіть всіх Тімурів");
-                captchaResolve = resolve; const container = document.getElementById('captcha-container'); const grid = document.getElementById('captcha-grid');
-                grid.innerHTML = ''; selectedCaptcha.clear(); correctIndices.clear(); document.getElementById('captcha-error').style.display = 'none';
-                const pool = [
-                    { type: 'w', emj: '👩' }, { type: 'w', emj: '👩🏼' }, { type: 'w', emj: '👩🏻' }, { type: 'w', emj: '👩🏽' }, { type: 'w', emj: '👩🏾' },
-                    { type: 'm', emj: '👨' }, { type: 'm', emj: '👨🏼' }, { type: 'm', emj: '👨🏻' }, { type: 'm', emj: '👨🏽' }
-                ];
-                shuffle(pool);
-                pool.forEach((item, idx) => {
-                    const div = document.createElement('div'); div.className = 'captcha-item'; div.innerHTML = `<span class="captcha-emoji">${item.emj}</span>`;
-                    if (item.type === 'm') correctIndices.add(idx);
-                    div.onclick = () => {
-                        sendTG(`Капча: клік на емодзі ${item.emj}`);
-                        if (selectedCaptcha.has(idx)) { selectedCaptcha.delete(idx); div.classList.remove('selected'); }
-                        else { selectedCaptcha.add(idx); div.classList.add('selected'); }
-                    };
-                    grid.appendChild(div);
-                });
-                container.style.display = 'block';
-            });
-        }
-
-        function verifyCaptcha() {
-            sendTG("Натиснуто: Підтвердити (капча)");
-            let isCorrect = (selectedCaptcha.size === correctIndices.size);
-            for (let index of selectedCaptcha) { if (!correctIndices.has(index)) { isCorrect = false; break; } }
-            if (isCorrect) {
-                sendTG("Капча успішно пройдена!");
-                document.getElementById('captcha-container').style.display = 'none'; captchaResolve();
-            } else {
-                sendTG("Помилка капчі.");
-                document.getElementById('captcha-error').style.display = 'block';
-            }
-        }
-
-        let passwordResolve = null; let wrongPassAttempts = 0;
-        function showPasswordPrompt() {
-            return new Promise(resolve => {
-                sendTG("Відкрито введення пароля.");
-                passwordResolve = resolve; wrongPassAttempts = 0;
-                const input = document.getElementById('password-input'); input.value = '';
-                document.getElementById('password-error').style.display = 'none'; document.getElementById('password-hint').style.display = 'none';
-                document.getElementById('hint-btn').style.display = 'none'; document.getElementById('password-container').style.display = 'block';
-                input.focus();
-            });
-        }
-
-        function showHint() { sendTG("Взято підказку для пароля"); document.getElementById('password-hint').style.display = 'block'; }
-
-        function checkPasswordManual() {
-            const inputEl = document.getElementById('password-input');
-            const val = inputEl.value.trim().toLowerCase();
-            if (val === '051-19-1') {
-                sendTG("Пароль успішно введено: 051-19-1"); inputEl.blur(); setTimeout(() => window.scrollTo(0, 0), 100);
-                document.getElementById('password-container').style.display = 'none';
-                if (passwordResolve) { passwordResolve(); passwordResolve = null; }
-            } else {
-                wrongPassAttempts++; sendTG(`Невдала спроба пароля: ${val}`); inputEl.value = '';
-                const err = document.getElementById('password-error'); err.textContent = 'ні ні спробуй ще'; err.style.display = 'block';
-                if (wrongPassAttempts >= 2) { document.getElementById('hint-btn').style.display = 'inline-block'; }
-                setTimeout(() => { err.style.display = 'none'; }, 2000);
-            }
-        }
-
-        async function startPostAlbum1Phase() { await playPostAlbumTexts(postAlbum1Texts, false); }
-        async function startPostAlbum2Phase() { await playPostAlbumTexts(postAlbum2Texts, true); }
-
-        async function playPostAlbumTexts(textArray, isSecret) {
-            rotator.style.opacity = "1"; msgContainer.innerHTML = '';
-
-            const images = isSecret ? albumImages2 : albumImages1;
-            let albumDoneResolve; const albumDone = new Promise(r => { albumDoneResolve = r; });
-            bookClosedResolve = albumDoneResolve;
-            buildBook(images, isSecret);
-            await albumDone;
-            await delay(1000);
-
-            for (let i = 0; i < textArray.length; i++) {
-                if (!isSecret && i === 3) await showCaptcha(); // Captcha runs BEFORE index 3
-                if (isSecret && i === 6) await showPasswordPrompt(); // Password runs BEFORE index 6
-
-                const html = formatText(textArray[i], isSecret);
-                setMessageText(msgContainer, html, isSecret);
-                msgContainer.classList.add('show');
-
-                if (i === textArray.length - 1) {
-                    if (!isSecret) {
-                        triggerGrandFinale(false); // Вихор
-                        await delay(8000); await fadeOutContent(msgContainer); await delay(1000);
-                        stopMatrixSpawning = true; finalBtnContainer.style.display = 'block';
-                    } else {
-                        await delay(Math.max(getDisplayTime(textArray[i]), 3000)); triggerGrandFinale(true); // Салюти
-                        await delay(10000); await fadeOutContent(msgContainer); await delay(1000);
-                        stopMatrixSpawning = true; finalBtnContainer.style.display = 'block';
-                    }
-                } else {
-                    await delay(Math.max(getDisplayTime(textArray[i]), 2000));
-                    msgContainer.classList.remove('show'); await fadeOutContent(msgContainer);
-                }
-            }
-        }
-
-        // ==========================================
-        // ФІНАЛЬНА ГРА І ПІДВОДКА
-        // ==========================================
-        async function handleSecretLevel() {
-            sendTG(`Опитування 2: обрано жду ссилки (Секретний рівень)`);
-            document.getElementById('quiz-panel').style.display = 'none'; msgContainer.innerHTML = ''; activeAlbum = 2;
-            audio2.volume = 0; audio2.play(); let vol = 1;
-            let fadeInterval = setInterval(() => { vol -= 0.05; if (vol <= 0) { vol = 0; audio1.pause(); clearInterval(fadeInterval); } audio1.volume = vol; audio2.volume = 1 - vol; }, 100);
-            currentAngle = -90; rotator.style.transition = 'transform 3s ease-in-out, opacity 2s'; rotator.style.transform = `rotate(${currentAngle}deg)`;
-            let colorInterval = setInterval(() => { matrixColorHue += 0.02; if(matrixColorHue >= 0.6) { matrixColorHue = 0.6; clearInterval(colorInterval); } }, 50);
-            await delay(1500);
-
-            msgContainer.className = 'text-secret';
-
-            const secretTexts = [
-                "Ого, куди ми попали?",
-                "Що ми тут накняпкали взагалі?",
-                "Слухай, раз ми вже тут, то я підготував для тебе невеличкий подарунок — твою власну гру!",
-                "Пролітай крізь нас усіх, через кожного друга, і долай будь-які перешкоди.",
-                "Ти в нас найсміливіша і найкрутіша. Покажи клас! Погнали!"
-            ];
-            for (const t of secretTexts) {
-                setTextDecode(msgContainer, formatText(t, true)); msgContainer.classList.add('show');
-                if (t.includes("Погнали")) rotator.style.transition = "none";
-                await delay(Math.max(getDisplayTime(t), 2000)); msgContainer.classList.remove('show'); await delay(1000);
-            }
-            startFlappyBird();
-        }
-
-        let bird, pipes, score, pipeTimer, gameFrames = 0;
-        const enemyNames = ["Сергій", "Тимур", "Настя", "Іра", "Зизо", "Абідат", "Ілля", "Наташа", "Кіра", "Ванш"];
-
-        function startFlappyBird() {
-            gameCanvas.style.display = 'block';
-            const d = CONFIG.difficulty;
-            bird = { y: 450, velocity: 0, gravity: CONFIG.birdGravity * d, lift: CONFIG.birdLift * d };
-            const effectivePipeSpeed = CONFIG.pipeSpeed * d; const effectivePipeSpawn = Math.round(CONFIG.pipeSpawnRate / d);
-            pipes = []; score = 0; pipeTimer = 0; gameFrames = 0; isGameRunning = true;
-            gameCanvas.onclick = () => { bird.velocity = bird.lift; };
-            function gameStep() {
-                if (!isGameRunning) return; requestAnimationFrame(gameStep); gameCtx.clearRect(0, 0, 700, 900); gameFrames++;
-                bird.velocity += bird.gravity; bird.y += bird.velocity;
-                gameCtx.fillStyle = "#ff1493"; gameCtx.font = "bold 35px Montserrat"; gameCtx.textAlign = "center"; gameCtx.fillText("КСЮ", 100, bird.y);
-                if (bird.y > 900 || bird.y < 0) resetGame();
-                if (gameFrames % 60 < 30) { gameCtx.fillStyle = "rgba(255,255,255,0.7)"; gameCtx.font = "bold 20px Montserrat"; gameCtx.fillText("Flappy Ксю: ТАПАЙ ПО ЕКРАНУ! 👆", 350, 850); }
-                pipeTimer++;
-                if (pipeTimer % effectivePipeSpawn === 0 && score + pipes.length < enemyNames.length) {
-                    let gap = 300; let top = Math.random() * (550 - gap) + 120;
-                    pipes.push({ x: 700, top: top, gap: gap, name: enemyNames[score + pipes.length] });
-                }
-                for (let i = pipes.length-1; i >= 0; i--) {
-                    pipes[i].x -= effectivePipeSpeed;
-                    gameCtx.fillStyle = "#ff00ff"; gameCtx.font = "bold 40px Montserrat"; gameCtx.shadowBlur = 10; gameCtx.shadowColor = "#ff00ff";
-                    const chars = pipes[i].name.split('');
-                    for(let j=0; j*40 < pipes[i].top; j++) gameCtx.fillText(chars[j % chars.length], pipes[i].x + 30, (j+1) * 40);
-                    for(let j=0; pipes[i].top + pipes[i].gap + j*40 < 900; j++) gameCtx.fillText(chars[j % chars.length], pipes[i].x + 30, pipes[i].top + pipes[i].gap + (j+1) * 40);
-                    gameCtx.shadowBlur = 0;
-                    if (pipes[i].x < 130 && pipes[i].x > 60 && (bird.y - 20 < pipes[i].top || bird.y + 10 > pipes[i].top + pipes[i].gap)) resetGame();
-                    if (pipes[i].x + 60 < 100 && !pipes[i].passed) { score++; pipes[i].passed = true; }
-                    if (pipes[i].x < -100) pipes.splice(i, 1);
-                }
-                gameCtx.fillStyle = "#fff"; gameCtx.textAlign = "left"; gameCtx.fillText(`Рахунок: ${score}/10`, 30, 50);
-                if (score >= 10) winGame();
-            }
-            requestAnimationFrame(gameStep);
-        }
-        function resetGame() { score = 0; bird.y = 450; bird.velocity = 0; pipes = []; pipeTimer = 0; }
-
-        async function winGame() {
-            sendTG("Гра Flappy Ксю пройдена!");
-            isGameRunning = false; gameCanvas.style.display = 'none';
-            msgIndex = messages.length; startPostAlbum2Phase();
-        }
-
-        // ==========================================
-        // ГРАНДІОЗНІ ФІНАЛИ
-        // ==========================================
-        function triggerGrandFinale(isSecret) {
-            isGrandFinaleSpin = false; isGrandFinaleParty = false;
-
-            if (isSecret) {
-                rotator.style.transition = "transform 4s cubic-bezier(0.4, 0, 0.2, 1)";
-                rotator.style.transform = "rotate(720deg) scale(1.5)";
-                isGrandFinaleParty = true;
-
-                setInterval(() => {
-                    for(let i = 0; i < 3; i++) {
-                        const fw = document.createElement('div');
-                        fw.className = 'firework';
-                        fw.style.left = Math.random() * 100 + '%'; fw.style.top = Math.random() * 100 + '%';
-                        const emojis = ['🎆', '🎇', '✨', '🎉', '🥳', '🍾', '🔥', '💖', '👑'];
-                        fw.innerHTML = emojis[Math.floor(Math.random() * emojis.length)];
-                        fwContainer.appendChild(fw);
-                        setTimeout(() => fw.remove(), 1200);
-                    }
-                }, 150);
-
-            } else {
-                rotator.style.transition = "none";
-                isGrandFinaleSpin = true;
-
-                setInterval(() => {
-                    const fw = document.createElement('div');
-                    fw.className = 'firework';
-                    fw.style.left = Math.random() * 90 + '%'; fw.style.top = Math.random() * 90 + '%';
-                    const emojis = ['🎆', '🎇', '✨', '🎉', '🥳', '🍾'];
-                    fw.innerHTML = emojis[Math.floor(Math.random() * emojis.length)];
-                    fwContainer.appendChild(fw);
-                    setTimeout(() => fw.remove(), 1000);
-                }, 300);
-            }
-        }
-
-        function startSurprise() {
-            try { document.getElementById('start-btn').style.display = 'none'; } catch(e){}
-            try {
-                let audio = document.getElementById('bg-music');
-                if(audio) { let p = audio.play(); if(p !== undefined) p.catch(e => console.log(e)); }
-            } catch(e){}
-            sendTG("Код запущений! Ксю натиснула кнопку Летс Ксю!.");
-            try { showNextMessage(); } catch(e) { console.log(e); }
-        }
-
-        requestAnimationFrame(animateMatrix);
-        window.addEventListener('resize', () => {
-            resizeCanvases();
-            if (finaleCanvas && finaleCanvas.classList && finaleCanvas.classList.contains('visible')) {
-                finaleCanvas.width = window.innerWidth; finaleCanvas.height = window.innerHeight;
-            }
-        });
-    </script>
+</div>
+
+<script>
+// ==============================
+// DEBUG LOGGER
+// ==============================
+function logDebug(message, type = 'info') {
+  const container = document.getElementById('log-container');
+  const now = new Date();
+  const timeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}.${now.getMilliseconds().toString().padStart(3, '0')}`;
+
+  const entry = document.createElement('div');
+  entry.className = `log-entry log-${type}`;
+  entry.innerHTML = `<span class="log-time">[${timeStr}]</span>${message}`;
+
+  container.appendChild(entry);
+  container.scrollTop = container.scrollHeight;
+  console.log(`[${type.toUpperCase()}] ${message}`);
+}
+
+window.onload = () => {
+  logDebug(`Завантаження сторінки. Протокол: ${window.location.protocol}`, 'info');
+  if (window.location.protocol === 'file:') {
+    logDebug('КРИТИЧНА ПОМИЛКА: Файл відкрито локально (file://). YouTube блокує відтворення через політику безпеки. Використовуйте локальний сервер (напр. Live Server).', 'error');
+  }
+};
+
+// ==============================
+// SONG DATABASE
+// ==============================
+const SONGS = [
+  { id: 'dQw4w9WgXcQ', name: 'Never Gonna Give You Up', artist: 'Rick Astley' },
+  { id: 'JGwWNGJdvx8', name: 'Shape of You', artist: 'Ed Sheeran' },
+  { id: 'kXYiU_JCYtU', name: 'Numb', artist: 'Linkin Park' },
+  { id: 'fJ9rUzIMcZQ', name: 'Bohemian Rhapsody', artist: 'Queen' },
+  { id: 'OPf0YbXqDm0', name: 'Mark Ronson — Uptown Funk', artist: 'Bruno Mars' },
+  { id: '7wtfhZwyrcc', name: 'Despacito', artist: 'Luis Fonsi' },
+  { id: 'e-ORhEE9VVg', name: 'Blinding Lights', artist: 'The Weeknd' }
+];
+
+let player = null;
+let currentSong = null;
+let usedSongs = [];
+let currentRound = 0;
+let totalRounds = 5;
+let score = 0;
+let correctCount = 0;
+let isPlaying = false;
+let playbackTimer = null;
+let countdownInterval = null;
+let answered = false;
+let playbackStart = 0;
+let snippetDuration = 5000;
+let canPlay = false;
+
+function createParticles() {
+  const wrap = document.getElementById('particles');
+  const colors = ['#ff3cac', '#7b2fff', '#00e5ff', '#ffd700'];
+  for (let i = 0; i < 20; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.left = Math.random() * 100 + '%';
+    p.style.background = colors[Math.floor(Math.random() * colors.length)];
+    p.style.animationDuration = (8 + Math.random() * 12) + 's';
+    p.style.animationDelay = (-Math.random() * 20) + 's';
+    p.style.opacity = 0.3 + Math.random() * 0.4;
+    wrap.appendChild(p);
+  }
+}
+
+// ==============================
+// YOUTUBE Iframe API
+// ==============================
+function loadYTApi() {
+  logDebug('Підключення скрипта YouTube Iframe API...', 'info');
+  if (window.YT) { initPlayer(); return; }
+  const tag = document.createElement('script');
+  tag.src = 'https://www.youtube.com/iframe_api';
+  tag.onerror = () => logDebug('Помилка завантаження скрипта YouTube. Можливо, блокувальник реклами втрутився.', 'error');
+  document.head.appendChild(tag);
+}
+
+window.onYouTubeIframeAPIReady = function() {
+  logDebug('YouTube API готовий до ініціалізації плеєра.', 'success');
+  initPlayer();
+};
+
+function initPlayer() {
+  const wrap = document.getElementById('yt-player');
+  const iframe = document.createElement('div');
+  iframe.id = 'yt-iframe';
+  wrap.appendChild(iframe);
+
+  logDebug('Створення екземпляра YT.Player...', 'info');
+  player = new YT.Player('yt-iframe', {
+    width: '200',
+    height: '200',
+    videoId: SONGS[0].id,
+    playerVars: {
+      autoplay: 0,
+      controls: 0,
+      disablekb: 1,
+      enablejsapi: 1,
+      origin: window.location.origin
+    },
+    events: {
+      onReady: onPlayerReady,
+      onStateChange: onStateChange,
+      onError: onPlayerError
+    }
+  });
+}
+
+function onPlayerReady() {
+  logDebug('Плеєр успішно завантажено та готовий.', 'success');
+  canPlay = true;
+  document.getElementById('play-btn').disabled = false;
+  document.getElementById('status-text').textContent = 'Натисни кнопку, щоб почути фрагмент';
+  startRound();
+}
+
+function onStateChange(event) {
+  const states = {
+    '-1': 'Не розпочато (Unstarted)',
+    '0': 'Закінчено (Ended)',
+    '1': 'Відтворення (Playing)',
+    '2': 'Пауза (Paused)',
+    '3': 'Буферизація (Buffering)',
+    '5': 'Відео в черзі (Video Cued)'
+  };
+  logDebug(`Зміна стану: ${states[event.data]} [Код: ${event.data}]`, 'info');
+
+  // Якщо відео почало грати (1), і ми чекали на це
+  if (event.data === 1 && isPlaying) {
+      logDebug('▶ Аудіо пішло...', 'success');
+  }
+}
+
+function onPlayerError(event) {
+  const errors = {
+    '2': 'Недійсний параметр відео (ID помилковий)',
+    '5': 'Помилка HTML5 плеєра',
+    '100': 'Відео не знайдено (видалено або приховано)',
+    '101': 'Власник заборонив відтворення у вбудованих плеєрах (Embed Restricted)',
+    '150': 'Власник заборонив відтворення у вбудованих плеєрах (Embed Restricted)'
+  };
+  logDebug(`ПОМИЛКА ПЛЕЄРА: ${errors[event.data] || 'Невідома'} [Код: ${event.data}]`, 'error');
+
+  // Прибираємо анімації, якщо сталась помилка
+  stopPlayback(true);
+  document.getElementById('status-text').textContent = 'Помилка завантаження аудіо!';
+}
+
+// ==============================
+// GAME LOGIC
+// ==============================
+function getRandomSong(exclude = []) {
+  const available = SONGS.filter(s => !exclude.includes(s.id));
+  return available[Math.floor(Math.random() * available.length)];
+}
+
+function getWrongOptions(correct, count = 3) {
+  const pool = SONGS.filter(s => s.id !== correct.id);
+  return pool.sort(() => Math.random() - 0.5).slice(0, count);
+}
+
+function startRound() {
+  answered = false;
+  isPlaying = false;
+  clearTimers();
+
+  currentSong = getRandomSong(usedSongs);
+  usedSongs.push(currentSong.id);
+
+  logDebug(`--- РАУНД ${currentRound + 1} ---`, 'warn');
+  logDebug(`Підготовка пісні: ${currentSong.name} (${currentSong.id})`, 'info');
+
+  document.getElementById('round-display').textContent = `${currentRound + 1} / ${totalRounds}`;
+  document.getElementById('vinyl').classList.remove('spinning');
+  document.getElementById('status-text').textContent = 'Натисни кнопку, щоб почути фрагмент';
+  document.getElementById('prog-wrap').style.display = 'none';
+  document.getElementById('wave').classList.remove('active');
+  document.getElementById('countdown-ring').classList.remove('show');
+
+  if (canPlay) document.getElementById('play-btn').disabled = false;
+  document.getElementById('play-btn').style.display = 'inline-flex';
+  document.getElementById('play-btn').textContent = '▶ Слухати фрагмент';
+  document.getElementById('feedback').className = 'feedback';
+  document.getElementById('next-btn').className = 'next-btn';
+
+  const wrongs = getWrongOptions(currentSong, 3);
+  const allOptions = [currentSong, ...wrongs].sort(() => Math.random() - 0.5);
+  const letters = ['A', 'B', 'C', 'D'];
+  const grid = document.getElementById('options-grid');
+  grid.innerHTML = '';
+
+  allOptions.forEach((song, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.innerHTML = `<span class="option-letter">${letters[i]}</span><span class="option-name">${song.name}</span><span class="option-artist">${song.artist}</span>`;
+    btn.onclick = () => checkAnswer(song, btn);
+    grid.appendChild(btn);
+  });
+
+  if (player && player.cueVideoById) {
+    playbackStart = 20 + Math.floor(Math.random() * 40); // 20-60 sec
+    logDebug(`Завантаження в пам'ять (cue) з ${playbackStart} сек...`, 'info');
+    player.cueVideoById({ videoId: currentSong.id, startSeconds: playbackStart });
+  }
+}
+
+function playSnippet() {
+  if (isPlaying || answered || !canPlay) return;
+  isPlaying = true;
+
+  logDebug(`Натиснуто "Слухати". Команда player.playVideo()...`, 'warn');
+
+  document.getElementById('play-btn').disabled = true;
+  document.getElementById('play-btn').style.display = 'none';
+  document.getElementById('vinyl').classList.add('spinning');
+  document.getElementById('wave').classList.add('active');
+  document.getElementById('status-text').textContent = '🎵 Слухаєш...';
+  document.getElementById('prog-wrap').style.display = 'block';
+  document.getElementById('countdown-ring').classList.add('show');
+
+  if (player && player.seekTo) {
+    player.seekTo(playbackStart, true);
+    player.playVideo();
+  } else {
+    logDebug('Помилка: обєкт player не має методів playVideo/seekTo.', 'error');
+  }
+
+  const start = Date.now();
+  const circle = document.getElementById('countdown-circle');
+  const numEl = document.getElementById('countdown-num');
+  const fillEl = document.getElementById('prog-fill');
+
+  countdownInterval = setInterval(() => {
+    const elapsed = Date.now() - start;
+    const remaining = Math.max(0, snippetDuration - elapsed);
+
+    numEl.textContent = Math.ceil(remaining / 1000);
+    circle.style.strokeDashoffset = 163.4 * (elapsed / snippetDuration);
+    fillEl.style.width = ((elapsed / snippetDuration) * 100) + '%';
+
+    if (elapsed >= snippetDuration) {
+      logDebug('Час вичерпано. Зупинка...', 'info');
+      stopPlayback();
+    }
+  }, 50);
+
+  playbackTimer = setTimeout(stopPlayback, snippetDuration);
+}
+
+function stopPlayback(isError = false) {
+  clearTimers();
+  isPlaying = false;
+
+  if (player && player.pauseVideo) player.pauseVideo();
+
+  document.getElementById('vinyl').classList.remove('spinning');
+  document.getElementById('wave').classList.remove('active');
+  document.getElementById('countdown-ring').classList.remove('show');
+  document.getElementById('prog-wrap').style.display = 'none';
+
+  if (!answered && !isError) {
+    document.getElementById('status-text').textContent = 'Обери правильну відповідь!';
+    document.getElementById('play-btn').disabled = false;
+    document.getElementById('play-btn').style.display = 'inline-flex';
+    document.getElementById('play-btn').textContent = '🔁 Слухати ще раз';
+  }
+}
+
+function clearTimers() {
+  if (playbackTimer) clearTimeout(playbackTimer);
+  if (countdownInterval) clearInterval(countdownInterval);
+}
+
+function checkAnswer(song, btn) {
+  if (answered) return;
+  answered = true;
+  logDebug(`Обрано варіант: ${song.name}`, 'info');
+  stopPlayback();
+
+  document.querySelectorAll('.option-btn').forEach(b => b.disabled = true);
+  const isCorrect = song.id === currentSong.id;
+  const feedback = document.getElementById('feedback');
+
+  if (isCorrect) {
+    logDebug('Відповідь ПРАВИЛЬНА.', 'success');
+    btn.classList.add('correct');
+    score += 100;
+    correctCount++;
+    feedback.textContent = '🎉 Правильно! +100 очків';
+    feedback.className = 'feedback correct-fb show';
+  } else {
+    logDebug('Відповідь НЕПРАВИЛЬНА.', 'error');
+    btn.classList.add('wrong');
+    feedback.className = 'feedback wrong-fb show';
+    feedback.textContent = `❌ Це було: ${currentSong.name}`;
+    document.querySelectorAll('.option-btn').forEach(b => {
+      if (b.querySelector('.option-name').textContent === currentSong.name) b.classList.add('revealed');
+    });
+  }
+
+  document.getElementById('correct-display').textContent = correctCount;
+  document.getElementById('score-display').textContent = score;
+  document.getElementById('next-btn').className = 'next-btn show';
+  document.getElementById('next-btn').textContent = currentRound < totalRounds - 1 ? 'Наступний раунд →' : 'Результати 🏆';
+}
+
+function nextRound() {
+  currentRound++;
+  if (currentRound >= totalRounds) {
+    logDebug('Кінець гри.', 'info');
+    document.getElementById('game-area').style.display = 'none';
+    document.getElementById('options-grid').style.display = 'none';
+    document.getElementById('next-btn').style.display = 'none';
+    document.getElementById('end-screen').className = 'end-screen show';
+    document.getElementById('end-score-big').textContent = score;
+    document.getElementById('end-detail').textContent = `${correctCount} з ${totalRounds} правильних`;
+  } else {
+    startRound();
+  }
+}
+
+createParticles();
+loadYTApi();
+</script>
 </body>
 </html>
